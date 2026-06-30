@@ -62,6 +62,7 @@ export function registerGoogleRoute(
     '/api/auth/google',
     { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } },
     async (request) => {
+      if (!env.GOOGLE_CLIENT_ID) throw httpError(503, 'Google sign-in is not configured');
       const { credential } = googleBody.parse(request.body);
       let profile: GoogleProfile;
       try {
@@ -71,6 +72,7 @@ export function registerGoogleRoute(
       }
       if (!profile.emailVerified) throw httpError(401, 'Your Google email is not verified');
       const customer = await resolveGoogleCustomer(app.prisma, profile);
+      if (!customer.isActive) throw httpError(401, 'Invalid email or password');
       return { token: signCustomerToken(customer), customer: customerDto(customer) };
     },
   );
