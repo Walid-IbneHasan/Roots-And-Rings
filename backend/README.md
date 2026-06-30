@@ -64,6 +64,9 @@ node node_modules/vitest/vitest.mjs run    # 59 tests (needs the Docker DB runni
 | `BKASH_*` (optional) | bKash sandbox/merchant creds; payments scaffold activates only when all are set |
 | `JWT_SECRET` | 32+ char secret for customer JWTs (must be byte-identical in the storefront `.env`) |
 | `JWT_EXPIRES_IN` / `OTP_TTL_MIN` / `OTP_MAX_ATTEMPTS` | Customer token lifetime; OTP TTL (min) + attempt cap |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` / `SMTP_USER` / `SMTP_PASS` | SMTP transport (nodemailer); when `SMTP_HOST` is unset emails log instead of send. Tests never send (gated on `NODE_ENV`). |
+| `EMAIL_FROM` | From header (default `Roots & Rings <no-reply@…>`) |
+| `JOBS_WORKER_ENABLED` / `JOBS_POLL_INTERVAL_MS` / `JOBS_BATCH_SIZE` | In-process job worker: enable (default true), poll cadence (10000), batch (10) |
 
 ## Public API
 
@@ -186,6 +189,23 @@ backend-persisted cart/merge, reviews, wishlist sync, SEO/CMS, and the enhanceme
 
 **Deferred to later phases**
 - Helpful/"was this useful" votes, photo reviews, replies/Q&A, review reminder emails, sort/filter of reviews.
+
+## Phase 6 — implemented vs. deferred
+
+**Implemented (this phase)**
+- Real email via nodemailer (`EmailService.sendMail`); no-credentials/test runs log + capture
+  (`sentMessages`) instead of sending, gated on `NODE_ENV` so the suite never hits the live mailbox.
+- HTML+text templates for the order confirmation + the 3 OTP emails.
+- **Hybrid delivery:** OTP emails send synchronously (errors swallowed so flows never break); the
+  order-confirmation email is enqueued and delivered by an **in-process worker** that drains the `Job`
+  table with `SELECT … FOR UPDATE SKIP LOCKED` (no double-send — proven by a concurrency test) and
+  retries with backoff up to `maxAttempts`. The worker starts in `server.ts` when `JOBS_WORKER_ENABLED`.
+- Tests: 146 backend. **Live Gmail delivery verified** (SMTP auth `250 OK`; an enqueued order
+  confirmation drained to `DONE` and was delivered by the worker).
+
+**Deferred to later phases**
+- Order status emails (shipped/delivered), marketing/newsletters, an admin email-log/outbox UI,
+  bounce/complaint handling, Redis/BullMQ.
 
 ## Phase 1 — implemented vs. deferred
 
