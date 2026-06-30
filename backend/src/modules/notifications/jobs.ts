@@ -6,6 +6,19 @@ export async function enqueueJob(prisma: PrismaClient, type: string, payload: ob
   return prisma.job.create({ data: { type, payload } });
 }
 
+/**
+ * Reclaim jobs orphaned in PROCESSING by a crashed worker: any job locked longer than `staleMs`
+ * is reset to PENDING so the next tick retries it. Only touches stale PROCESSING rows.
+ */
+export async function reclaimStaleJobs(prisma: PrismaClient, staleMs: number): Promise<number> {
+  const cutoff = new Date(Date.now() - staleMs);
+  const res = await prisma.job.updateMany({
+    where: { status: 'PROCESSING', lockedAt: { lt: cutoff } },
+    data: { status: 'PENDING', lockedAt: null },
+  });
+  return res.count;
+}
+
 export type HandlerFn = (prisma: PrismaClient, type: string, payload: Record<string, unknown>) => Promise<void>;
 
 async function defaultHandle(prisma: PrismaClient, type: string, payload: Record<string, unknown>): Promise<void> {

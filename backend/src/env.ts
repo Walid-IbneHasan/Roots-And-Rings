@@ -33,6 +33,7 @@ const schema = z.object({
   JOBS_WORKER_ENABLED: z.string().optional().transform((v) => v !== 'false'),
   JOBS_POLL_INTERVAL_MS: z.coerce.number().int().positive().default(10000),
   JOBS_BATCH_SIZE: z.coerce.number().int().positive().default(10),
+  JOBS_STALE_LOCK_MS: z.coerce.number().int().positive().default(300000),
   // Phase 9 — Google OAuth
   GOOGLE_CLIENT_ID: z.string().optional(),
 });
