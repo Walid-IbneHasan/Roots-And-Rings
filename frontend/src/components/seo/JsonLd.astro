@@ -1,0 +1,9 @@
+---
+interface Props {
+  schema: unknown;
+}
+const { schema } = Astro.props;
+// Escape `<` so a stray "</script>" in any field can't break out of the tag.
+const json = JSON.stringify(schema).replace(/</g, '\\u003c');
+---
+<script type="application/ld+json" set:html={json} />

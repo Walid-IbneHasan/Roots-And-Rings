@@ -1,0 +1,63 @@
+import { describe, it, expect } from 'vitest';
+import { siteSchema, productSchema, breadcrumbSchema, itemListSchema } from '../src/lib/structured-data';
+import type { Product } from '../src/lib/schema';
+
+const baseProduct = {
+  slug: 'kura-vessel', name: 'Kura Vessel', subtitle: 'Stoneware', price: 800, currency: 'BDT',
+  category: 'vessels', clayBody: 'stoneware', badges: [], shortDescription: 'A quiet vessel.',
+  description: 'desc', curatorsNote: 'note', specs: {}, images: [{ src: 'https://cdn.x/kura.webp', alt: 'Kura' }],
+  relatedSlugs: [], createdAt: '2026-06-01T00:00:00.000Z', ratingAvg: null, ratingCount: 0,
+} as unknown as Product;
+
+describe('siteSchema', () => {
+  it('emits an Organization + WebSite graph with @context', () => {
+    const s = siteSchema() as any;
+    expect(s['@context']).toBe('https://schema.org');
+    const types = s['@graph'].map((n: any) => n['@type']);
+    expect(types).toContain('Organization');
+    expect(types).toContain('WebSite');
+  });
+});
+
+describe('productSchema', () => {
+  it('builds a Product with absolute image + offers, and NO aggregateRating when unrated', () => {
+    const s = productSchema(baseProduct, 'https://rootsandrings.net/objects/kura-vessel') as any;
+    expect(s['@type']).toBe('Product');
+    expect(s.image).toEqual(['https://cdn.x/kura.webp']);
+    expect(s.offers.price).toBe(800);
+    expect(s.offers.priceCurrency).toBe('BDT');
+    expect(s.offers.availability).toContain('InStock');
+    expect(s.offers.url).toBe('https://rootsandrings.net/objects/kura-vessel');
+    expect(s.aggregateRating).toBeUndefined();
+  });
+
+  it('includes aggregateRating only when ratingCount > 0', () => {
+    const rated = { ...baseProduct, ratingAvg: 4.5, ratingCount: 3 } as Product;
+    const s = productSchema(rated, 'https://rootsandrings.net/objects/kura-vessel') as any;
+    expect(s.aggregateRating.ratingValue).toBe(4.5);
+    expect(s.aggregateRating.reviewCount).toBe(3);
+  });
+
+  it('includes review snippets when provided', () => {
+    const s = productSchema(baseProduct, 'https://x/p', [{ authorName: 'Mira', rating: 5, title: 'Lovely', body: 'Great' }]) as any;
+    expect(s.review[0]['@type']).toBe('Review');
+    expect(s.review[0].author.name).toBe('Mira');
+    expect(s.review[0].reviewRating.ratingValue).toBe(5);
+  });
+});
+
+describe('breadcrumbSchema / itemListSchema', () => {
+  it('positions breadcrumb items from 1 and absolutizes urls', () => {
+    const s = breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Objects', url: '/objects' }]) as any;
+    expect(s['@type']).toBe('BreadcrumbList');
+    expect(s.itemListElement[0].position).toBe(1);
+    expect(s.itemListElement[1].item).toBe('https://rootsandrings.net/objects');
+  });
+
+  it('itemList positions items from 1', () => {
+    const s = itemListSchema([{ name: 'A', url: '/objects/a' }, { name: 'B', url: '/objects/b' }]) as any;
+    expect(s['@type']).toBe('ItemList');
+    expect(s.itemListElement.map((e: any) => e.position)).toEqual([1, 2]);
+    expect(s.itemListElement[0].url).toBe('https://rootsandrings.net/objects/a');
+  });
+});
