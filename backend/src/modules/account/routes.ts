@@ -94,7 +94,7 @@ export default async function accountRoutes(app: FastifyInstance) {
     return { ok: true };
   });
 
-  app.post('/api/account/reviews', { preHandler: requireCustomer }, async (request, reply) => {
+  app.post('/api/account/reviews', { config: { rateLimit: { max: 30, timeWindow: '1 minute' } }, preHandler: requireCustomer }, async (request, reply) => {
     const { productSlug, rating, title, body } = reviewBody.parse(request.body);
     const product = await app.prisma.product.findUnique({ where: { slug: productSlug }, select: { id: true } });
     if (!product) throw httpError(404, 'Product not found');
