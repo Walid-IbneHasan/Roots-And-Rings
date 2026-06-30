@@ -34,6 +34,7 @@ interface ApiProduct {
   createdAt: string;
   ratingAvg?: number | null;
   ratingCount?: number;
+  availability?: 'in_stock' | 'out_of_stock' | 'backorder';
 }
 interface ApiCollection {
   slug: string;
@@ -65,6 +66,7 @@ function toProduct(p: ApiProduct): Product {
     createdAt: p.createdAt,
     ratingAvg: p.ratingAvg ?? null,
     ratingCount: p.ratingCount ?? 0,
+    availability: p.availability ?? 'in_stock',
   };
 }
 

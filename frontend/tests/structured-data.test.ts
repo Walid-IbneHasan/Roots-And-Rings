@@ -44,6 +44,15 @@ describe('productSchema', () => {
     expect(s.review[0].author.name).toBe('Mira');
     expect(s.review[0].reviewRating.ratingValue).toBe(5);
   });
+
+  it('maps availability to the matching schema.org URL', () => {
+    const oos = productSchema({ ...baseProduct, availability: 'out_of_stock' } as Product, 'https://x/p') as any;
+    expect(oos.offers.availability).toBe('https://schema.org/OutOfStock');
+    const bo = productSchema({ ...baseProduct, availability: 'backorder' } as Product, 'https://x/p') as any;
+    expect(bo.offers.availability).toBe('https://schema.org/BackOrder');
+    const ins = productSchema({ ...baseProduct, availability: 'in_stock' } as Product, 'https://x/p') as any;
+    expect(ins.offers.availability).toBe('https://schema.org/InStock');
+  });
 });
 
 describe('breadcrumbSchema / itemListSchema', () => {

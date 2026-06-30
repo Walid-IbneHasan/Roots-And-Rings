@@ -62,6 +62,7 @@ export const productSchema = z.object({
   createdAt: z.string().min(1),
   ratingAvg: z.number().nullable().default(null),
   ratingCount: z.number().default(0),
+  availability: z.enum(['in_stock', 'out_of_stock', 'backorder']).default('in_stock'),
 });
 export type Product = z.infer<typeof productSchema>;
 

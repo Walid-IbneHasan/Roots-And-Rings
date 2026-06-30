@@ -3,6 +3,12 @@ import type { Product } from './schema';
 
 const CONTEXT = 'https://schema.org';
 
+const AVAILABILITY_URL: Record<string, string> = {
+  in_stock: 'https://schema.org/InStock',
+  out_of_stock: 'https://schema.org/OutOfStock',
+  backorder: 'https://schema.org/BackOrder',
+};
+
 /** Absolutize a URL/path against the site origin (leaves already-absolute http(s) URLs intact). */
 const abs = (pathOrUrl: string): string =>
   /^https?:\/\//i.test(pathOrUrl) ? pathOrUrl : new URL(pathOrUrl, site.url).href;
@@ -55,7 +61,7 @@ export function productSchema(product: Product, canonicalUrl: string, reviews: R
       '@type': 'Offer',
       price: product.price,
       priceCurrency: product.currency,
-      availability: 'https://schema.org/InStock',
+      availability: AVAILABILITY_URL[product.availability] ?? AVAILABILITY_URL.in_stock,
       url: canonicalUrl,
     },
   };
