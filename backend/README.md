@@ -83,6 +83,10 @@ node node_modules/vitest/vitest.mjs run    # 59 tests (needs the Docker DB runni
 `GET/POST/PATCH/DELETE /api/account/addresses[/:id]` + `/:id/default` · OTP-guarded password change.
 All `/api/account/*` and `/api/auth/me` require a customer Bearer token (JWT).
 
+**Phase 4 (coupons):** `POST /api/coupons/validate` (preview — re-prices the cart server-side and
+returns the discount, no side effects). Codes are applied at checkout via `couponCode` on
+`POST /api/checkout` and redeemed inside the order transaction.
+
 ## Admin (server-rendered, session-guarded, CSRF, audit-logged)
 
 `/admin/login` · `/admin` (dashboard) · `/admin/products` (CRUD + WebP upload + flash/featured +
@@ -142,7 +146,26 @@ JWT server-side for SSR gating, the API re-verifies as the authority), strict ow
 non-owned), rate-limited auth, hardened login redirect (no open redirect).
 
 **Deferred to Phase 4+:** Google OAuth, real SMTP delivery, claiming guest orders by email,
-backend-persisted cart/merge, coupons, reviews, wishlist sync, SEO/CMS, and the enhancements list.
+backend-persisted cart/merge, reviews, wishlist sync, SEO/CMS, and the enhancements list.
+
+## Phase 4 — implemented vs. deferred
+
+**Implemented (this phase)**
+- Schema: Coupon, CouponRedemption; `Order.couponCode`. Demo seeds: SAVE20, WELCOME100.
+- Coupon service: `computeDiscount` (clamped to subtotal), `validateCoupon` (active, window,
+  min-order, global cap, per-customer limit), `redeemCoupon` (**SELECT … FOR UPDATE** — proven by a
+  concurrent-redemption test: exactly one wins on cap=1).
+- `POST /api/coupons/validate` (preview, no side effects) + checkout integration: `couponCode`
+  redeemed inside the order transaction; `discountTotal`/`couponCode` set, payment amount discounted;
+  idempotent replay never double-redeems; invalid/expired/cap-reached → order fails cleanly.
+- Admin `/admin/coupons` CRUD + deactivate (CSRF + audit). Storefront: apply-at-checkout with live
+  preview + discount line on checkout, confirmation, and account order detail (on-brand).
+- Tests: 122 backend + 43 frontend. End-to-end verified (preview SAVE20 → COD order with the discount
+  applied → discount shown on the confirmation).
+
+**Deferred to later phases**
+- Free-shipping coupons (needs a shipping-fee model), product/collection-targeted coupons, stacking,
+  automatic/cart-level promotions, BOGO, gift cards/store credit.
 
 ## Phase 1 — implemented vs. deferred
 
