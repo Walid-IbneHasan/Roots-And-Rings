@@ -1,0 +1,47 @@
+---
+const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID;
+---
+{clientId && (
+  <div class="flex flex-col gap-4 mt-2">
+    <div class="flex items-center gap-4 text-label-caps uppercase opacity-40">
+      <span class="hairline-t flex-1"></span><span>or</span><span class="hairline-t flex-1"></span>
+    </div>
+    <div id="g_signin" data-client-id={clientId} class="grid place-items-center min-h-[44px]"></div>
+  </div>
+)}
+
+<script is:inline async src="https://accounts.google.com/gsi/client"></script>
+<script>
+  function rrInitGoogle(): void {
+    const g = (window as any).google;
+    const el = document.getElementById('g_signin');
+    if (!el || !g?.accounts?.id) return;
+    const clientId = el.getAttribute('data-client-id');
+    const params = new URLSearchParams(location.search);
+    const next = params.get('next') || '/account';
+    g.accounts.id.initialize({
+      client_id: clientId,
+      callback: async (resp: { credential: string }) => {
+        const r = await fetch('/api/auth/google', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ credential: resp.credential, next }),
+        });
+        const data = await r.json().catch(() => ({}));
+        if (r.ok && data.ok) window.location.assign(data.next || '/account');
+        else window.location.assign('/account/login?error=' + encodeURIComponent(data.message || 'Google sign-in failed'));
+      },
+    });
+    g.accounts.id.renderButton(el, { theme: 'outline', size: 'large', width: 320, text: 'continue_with' });
+  }
+  // GIS loads async — poll briefly until ready, then init.
+  let tries = 0;
+  const timer = setInterval(() => {
+    if ((window as any).google?.accounts?.id) {
+      clearInterval(timer);
+      rrInitGoogle();
+    } else if (++tries > 50) {
+      clearInterval(timer);
+    }
+  }, 100);
+</script>

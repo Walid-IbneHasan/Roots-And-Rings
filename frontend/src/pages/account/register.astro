@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getSession } from '../../lib/auth';
+import GoogleSignIn from '../../components/auth/GoogleSignIn.astro';
 if (getSession(Astro)) return Astro.redirect('/account');
 const error = Astro.url.searchParams.get('error');
 const labelCls = 'text-label-caps uppercase opacity-60 flex flex-col gap-2';
@@ -15,6 +16,7 @@ const labelCls = 'text-label-caps uppercase opacity-60 flex flex-col gap-2';
       <label class={labelCls}>Password<input type="password" name="password" required minlength="8" autocomplete="new-password" class="input-minimal text-body-md" /></label>
       <button class="btn-solid w-full">Create Account</button>
     </form>
+    <GoogleSignIn />
     <a href="/account/login" class="btn-editorial text-label-caps uppercase mt-6 inline-block">Already have an account? Sign in</a>
   </section>
 </BaseLayout>
