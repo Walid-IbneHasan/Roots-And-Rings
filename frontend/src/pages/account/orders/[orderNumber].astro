@@ -24,8 +24,13 @@ try {
           <p class="text-label-caps uppercase opacity-50 mb-8">{order.status} · {new Date(order.placedAt).toLocaleDateString()}</p>
           <div class="bg-surface-container-low p-8">
             {order.items.map((i: any) => (
-              <div class="flex justify-between py-3 hairline-b">
-                <span class="text-body-md">{i.name} <span class="opacity-50">× {i.quantity}</span></span>
+              <div class="flex justify-between py-3 hairline-b items-start">
+                <div class="flex items-center">
+                  <span class="text-body-md">{i.name} <span class="opacity-50">× {i.quantity}</span></span>
+                  {order.status === 'DELIVERED' && i.slug && (
+                    <a href={`/objects/${i.slug}#reviews`} class="btn-editorial text-label-caps uppercase ml-3">Review this item</a>
+                  )}
+                </div>
                 <span class="text-body-md">{formatPrice(i.lineTotal)}</span>
               </div>
             ))}
