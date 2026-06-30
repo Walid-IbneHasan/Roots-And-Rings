@@ -104,6 +104,7 @@ model Product {
   ratingAvg   Decimal?         @db.Decimal(3, 2)
   ratingCount Int              @default(0)
   reviews     Review[]
+  wishlistedBy WishlistItem[]
 
   @@index([isActive])
   @@index([isFeatured, featuredOrder])
@@ -433,6 +434,7 @@ model Customer {
   otps            CustomerOtp[]
   addresses       Address[]
   reviews         Review[]
+  wishlist        WishlistItem[]
 }
 
 model CustomerOtp {
@@ -533,5 +535,17 @@ model Review {
 
   @@unique([productId, customerId])
   @@index([productId, status])
+  @@index([customerId])
+}
+
+model WishlistItem {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([customerId, productId])
   @@index([customerId])
 }

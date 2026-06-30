@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductCard from '../components/product/ProductCard.astro';
+import { getProducts } from '../lib/catalog';
+
+const products = await getProducts();
+---
+
+<BaseLayout title="Wishlist" noindex={true}>
+  <section class="wrap py-16 md:py-24">
+    <h1 class="font-display text-display-mobile md:text-display-lg mb-12">Wishlist</h1>
+
+    <div data-wishlist-empty hidden class="py-20 flex flex-col items-center text-center gap-6">
+      <p class="text-body-lg text-on-surface-variant">Your wishlist is empty.</p>
+      <a href="/objects" class="btn-solid">Browse Objects</a>
+    </div>
+
+    <div data-wishlist-grid hidden class="grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12 md:gap-y-16">
+      {products.map((p) => (
+        <div data-wishlist-card={p.slug} hidden>
+          <ProductCard product={p} sizes="(max-width: 768px) 50vw, 33vw" />
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import '../scripts/wishlist-page.ts';
+</script>

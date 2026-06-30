@@ -61,6 +61,14 @@ const isActive = (href: string) =>
       <a href="/account" aria-label="Account" class="hidden md:inline-flex opacity-60 hover:opacity-100 transition-opacity">
         <Icon name="account" />
       </a>
+      <a href="/wishlist" aria-label="Wishlist" class="relative inline-flex opacity-60 hover:opacity-100 transition-opacity">
+        <Icon name="heart" />
+        <span
+          data-wishlist-count
+          style="display:none"
+          class="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-[3px] items-center justify-center bg-on-surface text-surface text-[9px] font-semibold leading-none rounded-full"
+        >0</span>
+      </a>
       <button type="button" data-cart-open aria-label="Open bag" class="relative inline-flex opacity-80 hover:opacity-100 transition-opacity">
         <Icon name="bag" />
         <span

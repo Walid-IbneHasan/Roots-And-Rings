@@ -1,4 +1,4 @@
-import { $ui, $cart, cartCount, openCart, closeCart, setMenu } from '../lib/stores';
+import { $ui, $cart, $wishlist, cartCount, openCart, closeCart, setMenu } from '../lib/stores';
 
 /**
  * Orchestrates the overlay UI: cart drawer + mobile menu open/close, body scroll lock,
@@ -92,6 +92,16 @@ function init(): void {
     badge.style.display = n > 0 ? 'inline-flex' : 'none';
   };
   $cart.subscribe(renderBadge);
+
+  // --- live wishlist badge ---
+  const wishlistBadge = document.querySelector<HTMLElement>('[data-wishlist-count]');
+  const renderWishlistBadge = () => {
+    const n = $wishlist.get().length;
+    if (!wishlistBadge) return;
+    wishlistBadge.textContent = String(n);
+    wishlistBadge.style.display = n > 0 ? 'inline-flex' : 'none';
+  };
+  $wishlist.subscribe(renderWishlistBadge);
 
   // --- header scroll state (for flush/transparent header) ---
   const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 40);

@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { registerAddressRoutes } from './addresses';
+import { registerWishlistRoutes } from './wishlist';
 import { httpError } from '../../lib/errors';
 import { requireCustomer } from '../auth/guards';
 import { customerDto } from '../auth/dto';
@@ -113,4 +114,5 @@ export default async function accountRoutes(app: FastifyInstance) {
   });
 
   registerAddressRoutes(app);
+  registerWishlistRoutes(app);
 }
