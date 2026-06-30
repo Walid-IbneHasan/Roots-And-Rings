@@ -2,6 +2,7 @@
 import Img from '../ui/Img.astro';
 import Badge from './Badge.astro';
 import WishlistButton from './WishlistButton.astro';
+import Stars from './Stars.astro';
 import { formatPrice } from '../../lib/format';
 import type { Product } from '../../lib/schema';
 
@@ -30,6 +31,7 @@ const badge = product.badges[0];
       <span class="text-label-caps uppercase opacity-50">{product.subtitle}</span>
       <h3 class="font-display text-headline-sm mt-1.5">{product.name}</h3>
       <p class="text-body-md text-on-surface-variant mt-1">{formatPrice(product.price)}</p>
+      {product.ratingCount > 0 && <div class="mt-1.5"><Stars value={product.ratingAvg} count={product.ratingCount} /></div>}
     </div>
   </a>
   <WishlistButton slug={product.slug} class="absolute top-3 right-3 z-10" />

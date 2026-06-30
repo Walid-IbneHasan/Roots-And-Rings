@@ -60,6 +60,8 @@ export const productSchema = z.object({
   seenInInteriors: seenInInteriorsSchema.optional(),
   featured: z.boolean().optional(),
   createdAt: z.string().min(1),
+  ratingAvg: z.number().nullable().default(null),
+  ratingCount: z.number().default(0),
 });
 export type Product = z.infer<typeof productSchema>;
 

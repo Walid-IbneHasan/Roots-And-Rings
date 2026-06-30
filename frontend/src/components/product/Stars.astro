@@ -1,0 +1,17 @@
+---
+interface Props {
+  value: number | null;
+  count?: number;
+  size?: 'sm' | 'md';
+}
+const { value, count, size = 'sm' } = Astro.props;
+const v = value ?? 0;
+const full = Math.round(v); // nearest whole star
+const cls = size === 'sm' ? 'text-caption' : 'text-body-md';
+---
+{(count ?? 0) > 0 ? (
+  <span class={`inline-flex items-center gap-1.5 ${cls} text-secondary`} aria-label={`Rated ${v} out of 5`}>
+    <span aria-hidden="true">{'★'.repeat(full)}<span class="opacity-30">{'★'.repeat(5 - full)}</span></span>
+    {count != null && <span class="opacity-60">({count})</span>}
+  </span>
+) : null}

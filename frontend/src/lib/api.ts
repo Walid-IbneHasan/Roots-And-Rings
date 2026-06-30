@@ -32,6 +32,8 @@ interface ApiProduct {
   images: ApiImage[];
   isFeatured: boolean;
   createdAt: string;
+  ratingAvg?: number | null;
+  ratingCount?: number;
 }
 interface ApiCollection {
   slug: string;
@@ -61,6 +63,8 @@ function toProduct(p: ApiProduct): Product {
     seenInInteriors: (p.seenInInteriors ?? undefined) as Product['seenInInteriors'],
     featured: p.isFeatured,
     createdAt: p.createdAt,
+    ratingAvg: p.ratingAvg ?? null,
+    ratingCount: p.ratingCount ?? 0,
   };
 }
 
