@@ -1,0 +1,25 @@
+<div class="toolbar">
+  <div><h1>Reviews</h1><p class="sub">Customer reviews. Hide takes one off the storefront + the rating.</p></div>
+</div>
+<table>
+  <thead><tr><th>Product</th><th>Rating</th><th>Review</th><th>Author</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+    <% it.reviews.forEach(function(r){ %>
+    <tr>
+      <td><a href="/admin/products" class="muted"><%= r.product.name %></a></td>
+      <td><%= '★'.repeat(r.rating) %><span class="muted"><%= '☆'.repeat(5 - r.rating) %></span></td>
+      <td><% if (r.title) { %><strong><%= r.title %></strong><br><% } %><span class="muted"><%= (r.body || '').replace(/<[^>]*>/g, '').slice(0, 120) %></span></td>
+      <td><%= r.authorName %></td>
+      <td><span class="pill" style="<%= r.status === 'PUBLISHED' ? '' : 'background:#eee;color:#999' %>"><%= r.status %></span></td>
+      <td>
+        <% if (r.status === 'PUBLISHED') { %>
+        <form method="post" action="/admin/reviews/<%= r.id %>/hide" style="display:inline"><input type="hidden" name="_csrf" value="<%= it.csrf %>" /><button class="btn ghost sm" type="submit">Hide</button></form>
+        <% } else { %>
+        <form method="post" action="/admin/reviews/<%= r.id %>/unhide" style="display:inline"><input type="hidden" name="_csrf" value="<%= it.csrf %>" /><button class="btn ghost sm" type="submit">Unhide</button></form>
+        <% } %>
+        <form method="post" action="/admin/reviews/<%= r.id %>/delete" style="display:inline"><input type="hidden" name="_csrf" value="<%= it.csrf %>" /><button class="btn danger sm" type="submit">Delete</button></form>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

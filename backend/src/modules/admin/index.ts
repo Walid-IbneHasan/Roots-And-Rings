@@ -6,6 +6,7 @@ import { registerAdminProducts } from './products';
 import { registerAdminOrders } from './orders';
 import { registerAdminTeam } from './team';
 import { registerAdminCoupons } from './coupons';
+import { registerAdminReviews } from './reviews';
 
 // Server-rendered admin panel.
 export async function registerAdmin(app: FastifyInstance) {
@@ -16,4 +17,5 @@ export async function registerAdmin(app: FastifyInstance) {
   registerAdminOrders(app);
   registerAdminTeam(app);
   registerAdminCoupons(app);
+  registerAdminReviews(app);
 }
