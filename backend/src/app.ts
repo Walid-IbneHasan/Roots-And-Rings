@@ -17,6 +17,7 @@ import checkoutRoutes from './modules/checkout/routes';
 import couponRoutes from './modules/coupons/routes';
 import ordersRoutes from './modules/orders/routes';
 import cronRoutes from './modules/cron/routes';
+import reviewRoutes from './modules/reviews/routes';
 import { registerAdmin } from './modules/admin';
 
 export async function buildApp(): Promise<FastifyInstance> {
@@ -44,6 +45,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(authRoutes);
   await app.register(accountRoutes);
   await app.register(catalogRoutes);
+  await app.register(reviewRoutes);
   await app.register(checkoutRoutes);
   await app.register(couponRoutes);
   await app.register(ordersRoutes);

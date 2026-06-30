@@ -51,6 +51,8 @@ export interface ProductDTO {
   featuredOrder: number | null;
   createdAt: string;
   publishedAt: string | null;
+  ratingAvg: number | null;
+  ratingCount: number;
 }
 export interface CollectionDTO {
   slug: string;
@@ -113,6 +115,8 @@ export function mapProduct(p: ProductWithRelations, now: Date = new Date()): Pro
     featuredOrder: p.featuredOrder ?? null,
     createdAt: p.createdAt.toISOString(),
     publishedAt: p.publishedAt ? p.publishedAt.toISOString() : null,
+    ratingAvg: num(p.ratingAvg),
+    ratingCount: p.ratingCount,
   };
 }
 
