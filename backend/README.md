@@ -87,6 +87,10 @@ All `/api/account/*` and `/api/auth/me` require a customer Bearer token (JWT).
 returns the discount, no side effects). Codes are applied at checkout via `couponCode` on
 `POST /api/checkout` and redeemed inside the order transaction.
 
+**Phase 5 (reviews):** `GET /api/products/:slug/reviews` (PUBLISHED only + the aggregate); ratings
+ride the product DTO (`ratingAvg`/`ratingCount`). Customers submit via `POST /api/account/reviews`
++ `GET /api/account/reviews/can-review?slug=` (purchase-gated, behind the account Bearer).
+
 ## Admin (server-rendered, session-guarded, CSRF, audit-logged)
 
 `/admin/login` · `/admin` (dashboard) · `/admin/products` (CRUD + WebP upload + flash/featured +
@@ -166,6 +170,22 @@ backend-persisted cart/merge, reviews, wishlist sync, SEO/CMS, and the enhanceme
 **Deferred to later phases**
 - Free-shipping coupons (needs a shipping-fee model), product/collection-targeted coupons, stacking,
   automatic/cart-level promotions, BOGO, gift cards/store credit.
+
+## Phase 5 — implemented vs. deferred
+
+**Implemented (this phase)**
+- Schema: Review (one per product+customer, PUBLISHED/HIDDEN); denormalized `Product.ratingAvg`/`ratingCount`.
+- Reviews service: `canReview` (DELIVERED-order purchase gate), `recomputeProductRating`,
+  `upsertReview` (gate + sanitize + recompute). Auto-publish; admin take-down.
+- Public `GET /api/products/:slug/reviews` + ratings in the product DTO. Account
+  `POST /api/account/reviews` + `GET /api/account/reviews/can-review` (purchase-gated server-side).
+- Admin `/admin/reviews` hide/unhide/delete (recompute + CSRF + audit). Storefront: PDP rating summary
+  + list + gated write form, product-card stars, "Review this item" links on delivered orders.
+- Tests: 138 backend + 43 frontend. End-to-end verified (delivered order → review → shown on the PDP
+  + product card → admin hide drops it).
+
+**Deferred to later phases**
+- Helpful/"was this useful" votes, photo reviews, replies/Q&A, review reminder emails, sort/filter of reviews.
 
 ## Phase 1 — implemented vs. deferred
 
