@@ -8,6 +8,7 @@ import { reserveForOrder, commitReservations, checkLowStock } from '../inventory
 import { getProvider } from '../payments/service';
 import { enqueueJob, runJobInline } from '../notifications/jobs';
 import type { CheckoutInput } from './schemas';
+import { redeemCoupon } from '../coupons/service';
 
 const rc = { isolationLevel: 'ReadCommitted' as const };
 
@@ -76,8 +77,26 @@ export async function placeOrder(prisma: PrismaClient, input: CheckoutInput, cus
 
     await reserveForOrder(tx, order.id, resolved.map((r) => ({ variantId: r.variantId, quantity: r.qty })));
 
+    let discount = 0;
+    let appliedCode: string | null = null;
+    if (input.couponCode) {
+      const r = await redeemCoupon(tx, input.couponCode, {
+        subtotal,
+        orderId: order.id,
+        customerId: customerId ?? undefined,
+        email: input.contact.email,
+      });
+      discount = r.discount;
+      appliedCode = r.coupon.code;
+      await tx.order.update({
+        where: { id: order.id },
+        data: { discountTotal: discount, grandTotal: round2(subtotal - discount), couponCode: appliedCode },
+      });
+    }
+    const grand = round2(subtotal - discount);
+
     const payment = await tx.payment.create({
-      data: { orderId: order.id, provider: input.paymentMethod, amount: totals.grandTotal, currency: 'BDT', tranId, status: 'INITIATED' },
+      data: { orderId: order.id, provider: input.paymentMethod, amount: grand, currency: 'BDT', tranId, status: 'INITIATED' },
     });
     await tx.paymentEvent.create({ data: { paymentId: payment.id, type: 'INIT', rawPayload: { method: input.paymentMethod }, processed: true } });
 

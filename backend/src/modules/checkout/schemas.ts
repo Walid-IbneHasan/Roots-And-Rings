@@ -17,5 +17,6 @@ export const checkoutBody = z.object({
   }),
   paymentMethod: z.enum(['COD', 'BKASH']),
   idempotencyKey: z.string().min(8),
+  couponCode: z.string().trim().min(1).optional(),
 });
 export type CheckoutInput = z.infer<typeof checkoutBody>;

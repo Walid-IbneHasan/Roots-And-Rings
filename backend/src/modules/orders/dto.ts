@@ -10,6 +10,7 @@ export function orderToDto(order: FullOrder) {
   return {
     orderNumber: order.orderNumber,
     status: order.status,
+    couponCode: order.couponCode,
     currency: order.currency,
     email: order.guestEmail,
     placedAt: order.placedAt.toISOString(),
