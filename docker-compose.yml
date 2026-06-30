@@ -1,0 +1,20 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: rootsandrings-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: rootsandrings
+    ports:
+      - "3306:3306"
+    volumes:
+      - rr-db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  rr-db:

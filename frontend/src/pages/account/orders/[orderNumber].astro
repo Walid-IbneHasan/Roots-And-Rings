@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import AccountNav from '../../../components/account/AccountNav.astro';
+import { getSession, bearer } from '../../../lib/auth';
+import { formatPrice } from '../../../lib/format';
+const session = getSession(Astro);
+if (!session) return Astro.redirect('/account/login');
+const { orderNumber } = Astro.params;
+const API = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:4000';
+let order: any = null;
+try {
+  const res = await fetch(`${API}/api/account/orders/${orderNumber}`, { headers: { authorization: `Bearer ${bearer(Astro)}` } });
+  if (res.ok) order = await res.json();
+} catch { /* not found */ }
+---
+<BaseLayout title={`Order ${orderNumber}`} noindex={true}>
+  <section class="wrap py-16 md:py-24">
+    <div class="grid lg:grid-cols-[200px_1fr] gap-12 lg:gap-20 items-start">
+      <AccountNav active="orders" />
+      {order ? (
+        <div>
+          <a href="/account/orders" class="btn-editorial text-label-caps uppercase mb-6 inline-block">← All orders</a>
+          <h1 class="font-display text-headline-lg mb-2">{order.orderNumber}</h1>
+          <p class="text-label-caps uppercase opacity-50 mb-8">{order.status} · {new Date(order.placedAt).toLocaleDateString()}</p>
+          <div class="bg-surface-container-low p-8">
+            {order.items.map((i: any) => (
+              <div class="flex justify-between py-3 hairline-b">
+                <span class="text-body-md">{i.name} <span class="opacity-50">× {i.quantity}</span></span>
+                <span class="text-body-md">{formatPrice(i.lineTotal)}</span>
+              </div>
+            ))}
+            <div class="flex justify-between pt-5 font-display text-body-lg"><span>Total</span><span>{formatPrice(order.totals.grand)}</span></div>
+          </div>
+          {order.payment && <p class="text-caption text-on-surface-variant mt-4">Payment: {order.payment.provider} · {order.payment.status}</p>}
+        </div>
+      ) : (
+        <div>
+          <h1 class="font-display text-headline-lg italic mb-4">Order not found.</h1>
+          <a href="/account/orders" class="btn-solid">Back to orders</a>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>

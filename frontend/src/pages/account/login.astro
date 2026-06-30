@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getSession } from '../../lib/auth';
+if (getSession(Astro)) return Astro.redirect('/account');
+const params = Astro.url.searchParams;
+const error = params.get('error');
+const reset = params.get('reset');
+const next = params.get('next') ?? '/account';
+const labelCls = 'text-label-caps uppercase opacity-60 flex flex-col gap-2';
+---
+<BaseLayout title="Sign In" noindex={true}>
+  <section class="wrap py-16 md:py-24 max-w-md mx-auto">
+    <h1 class="font-display text-display-mobile mb-8">Sign in</h1>
+    {error && <p class="text-caption text-error border border-error px-4 py-3 mb-6">{error}</p>}
+    {reset && <p class="text-caption text-secondary border border-secondary px-4 py-3 mb-6">Password updated — please sign in.</p>}
+    <form method="POST" action="/api/auth/login" class="flex flex-col gap-6">
+      <input type="hidden" name="next" value={next} />
+      <label class={labelCls}>Email<input type="email" name="email" required autocomplete="email" class="input-minimal text-body-md" /></label>
+      <label class={labelCls}>Password<input type="password" name="password" required autocomplete="current-password" class="input-minimal text-body-md" /></label>
+      <button class="btn-solid w-full">Sign In</button>
+    </form>
+    <div class="flex justify-between mt-6">
+      <a href="/account/forgot-password" class="btn-editorial text-label-caps uppercase">Forgot password?</a>
+      <a href="/account/register" class="btn-editorial text-label-caps uppercase">Create account</a>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+/**
+ * Button / link. Three variants matching the Stitch system:
+ *  - solid:     charcoal fill, bone text, fill-shift on hover (sharp corners)
+ *  - ghost:     hairline border
+ *  - editorial: underline-from-left text link
+ */
+interface Props {
+  variant?: 'solid' | 'ghost' | 'editorial';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  id?: string;
+  'data-cart-open'?: boolean;
+  [key: string]: unknown;
+}
+const { variant = 'solid', href, type = 'button', class: className = '', ...rest } = Astro.props;
+
+const variantClass = {
+  solid: 'btn-solid',
+  ghost: 'btn-ghost',
+  editorial: 'btn-editorial text-label-caps uppercase',
+}[variant];
+
+const cls = `${variantClass} ${className}`.trim();
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  class={cls}
+  {...(href ? { href } : { type })}
+  {...rest}
+>
+  <slot />
+</Tag>

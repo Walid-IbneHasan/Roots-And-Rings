@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildCartLookup, lookupToJson } from '../lib/cart-lookup';
+
+const lookupJson = lookupToJson(await buildCartLookup());
+---
+
+<BaseLayout title="Your Bag" noindex={true}>
+  <section class="wrap py-16 md:py-24">
+    <h1 class="font-display text-display-mobile md:text-display-lg mb-12">Your Bag</h1>
+
+    <!-- Empty state -->
+    <div data-cart-empty hidden class="py-20 flex flex-col items-center text-center gap-6">
+      <p class="text-body-lg text-on-surface-variant">Your bag is currently empty.</p>
+      <a href="/objects" class="btn-solid">Browse Objects</a>
+    </div>
+
+    <!-- Content -->
+    <div data-cart-content hidden class="grid lg:grid-cols-[1fr_360px] gap-12 lg:gap-20 items-start">
+      <div data-cart-lines class="flex flex-col hairline-t"></div>
+
+      <aside class="lg:sticky lg:top-24 bg-surface-container-low p-8 flex flex-col gap-5">
+        <h2 class="font-display text-headline-sm">Order Summary</h2>
+        <div class="flex justify-between text-body-md">
+          <span class="opacity-60">Subtotal</span>
+          <span data-cart-subtotal>€0</span>
+        </div>
+        <div class="flex justify-between text-body-md">
+          <span class="opacity-60">Shipping</span>
+          <span class="opacity-60">Calculated at checkout</span>
+        </div>
+        <div class="hairline-t pt-5 flex justify-between text-body-lg font-display">
+          <span>Total</span>
+          <span data-cart-total>€0</span>
+        </div>
+        <a href="/checkout" class="btn-solid w-full mt-2 text-center">Proceed to Checkout</a>
+        <a href="/objects" class="btn-editorial text-label-caps uppercase mx-auto">Continue Shopping</a>
+      </aside>
+    </div>
+  </section>
+
+  <script type="application/json" data-cart-page-lookup set:html={lookupJson}></script>
+</BaseLayout>
+
+<script>
+  import '../scripts/cart-page.ts';
+</script>

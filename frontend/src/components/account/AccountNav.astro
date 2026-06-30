@@ -1,0 +1,17 @@
+---
+const { active } = Astro.props as { active: string };
+const links = [
+  { href: '/account', label: 'Overview', key: 'overview' },
+  { href: '/account/orders', label: 'Orders', key: 'orders' },
+  { href: '/account/profile', label: 'Profile', key: 'profile' },
+  { href: '/account/addresses', label: 'Addresses', key: 'addresses' },
+];
+---
+<nav class="flex flex-col gap-1">
+  {links.map((l) => (
+    <a href={l.href} class={`text-label-caps uppercase py-2 transition-opacity ${l.key === active ? 'opacity-100' : 'opacity-50 hover:opacity-100'}`}>{l.label}</a>
+  ))}
+  <form method="POST" action="/api/auth/logout" class="mt-4">
+    <button class="text-label-caps uppercase opacity-50 hover:opacity-100 transition-opacity">Sign out</button>
+  </form>
+</nav>

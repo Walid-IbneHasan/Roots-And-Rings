@@ -1,0 +1,27 @@
+---
+import type { Specs, Edition } from '../../lib/schema';
+
+interface Props {
+  specs: Specs;
+  edition?: Edition;
+}
+const { specs, edition } = Astro.props;
+
+const rows: { label: string; value: string }[] = [
+  ...(edition ? [{ label: 'Edition', value: `${edition.count} pieces globally` }] : []),
+  { label: 'Dimensions', value: specs.dimensions },
+  { label: 'Weight', value: specs.weight },
+  { label: 'Clay Body', value: specs.clayBody },
+  { label: 'Glaze', value: specs.glaze },
+  { label: 'Firing', value: specs.firing },
+];
+---
+
+<dl class="hairline-t">
+  {rows.map((row) => (
+    <div class="grid grid-cols-[110px_1fr] gap-4 py-3.5 hairline-b">
+      <dt class="text-label-caps uppercase opacity-50 pt-0.5">{row.label}</dt>
+      <dd class="text-body-md text-on-surface-variant">{row.value}</dd>
+    </div>
+  ))}
+</dl>

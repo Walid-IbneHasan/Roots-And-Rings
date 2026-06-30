@@ -1,0 +1,22 @@
+---
+import Newsletter from './Newsletter.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  body: string;
+}
+const { eyebrow, title, body } = Astro.props;
+---
+
+<section class="wrap py-section-gap flex flex-col items-center text-center fade-up">
+  <span class="text-label-caps uppercase opacity-60 mb-6">{eyebrow}</span>
+  <h1 class="font-display text-display-mobile md:text-display-lg italic max-w-3xl text-balance leading-[1.1]">
+    {title}
+  </h1>
+  <p class="text-body-lg text-on-surface-variant mt-8 max-w-md">{body}</p>
+  <a href="/objects" class="btn-editorial text-label-caps uppercase mt-10">Browse the Objects</a>
+  <div class="mt-20 w-full max-w-sm flex justify-center">
+    <Newsletter heading="Be the first to know when this opens." />
+  </div>
+</section>

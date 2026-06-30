@@ -1,0 +1,59 @@
+---
+import Img from '../ui/Img.astro';
+import { getProduct, getCollections } from '../../lib/catalog';
+
+const collections = await getCollections();
+const collection = collections[0];
+const large = await getProduct('ash-glazed-vessel-no-1');
+const small = await getProduct('tasting-plates-set');
+---
+
+<section class="wrap py-section-gap">
+  <div class="flex flex-col items-center text-center mb-20 md:mb-24 fade-up">
+    <span class="text-label-caps uppercase text-on-surface-variant opacity-60 mb-6">Featured Collection</span>
+    <h2 class="font-display text-headline-md mb-10">{collection.name}</h2>
+    <a href="/collections" class="btn-editorial text-label-caps uppercase">View All Pieces</a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter md:gap-y-32 items-center">
+    <!-- Large image -->
+    {large && (
+      <div class="md:col-span-8 fade-up">
+        <a href={`/objects/${large.slug}`} class="group block">
+          <Img
+            src={large.images[0].src}
+            alt={large.images[0].alt}
+            aspect="4/3"
+            widths={[600, 900, 1280]}
+            sizes="(max-width: 768px) 100vw, 66vw"
+            imgClass="saturate-[0.78] group-hover:saturate-100 transition-[transform,filter] duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+          />
+          <div class="mt-6 flex flex-col">
+            <span class="text-label-caps uppercase opacity-50 mb-2">{large.subtitle}</span>
+            <h3 class="font-display text-headline-sm">{large.name}</h3>
+          </div>
+        </a>
+      </div>
+    )}
+
+    <!-- Offset text + small image -->
+    <div class="md:col-start-10 md:col-span-3 flex flex-col gap-16 md:gap-20 fade-up">
+      <p class="text-body-lg italic text-on-surface-variant leading-relaxed">
+        “{collection.description}”
+      </p>
+      {small && (
+        <a href={`/objects/${small.slug}`} class="group block">
+          <Img
+            src={small.images[0].src}
+            alt={small.images[0].alt}
+            aspect="1/1"
+            widths={[300, 450, 600]}
+            sizes="(max-width: 768px) 100vw, 25vw"
+            imgClass="saturate-[0.78] group-hover:saturate-100 transition-[transform,filter] duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+          />
+          <h3 class="mt-4 text-body-lg font-medium font-body">{small.name}</h3>
+        </a>
+      )}
+    </div>
+  </div>
+</section>

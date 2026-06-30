@@ -1,0 +1,49 @@
+<h1>Team</h1>
+<p class="sub">Administrators &amp; moderators.</p>
+
+<% if (it.canManage) { %>
+<form class="stack" method="post" action="/admin/team" style="margin-bottom:24px">
+  <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+  <div class="grid2">
+    <label>Name <input name="name" required /></label>
+    <label>Email <input type="email" name="email" required /></label>
+  </div>
+  <div class="grid2">
+    <label>Role <select name="role"><option value="STAFF">Staff (Moderator)</option><option value="ADMIN">Admin</option></select></label>
+    <label>Password <input type="password" name="password" required minlength="8" /></label>
+  </div>
+  <div class="actions"><button class="btn" type="submit">Add user</button></div>
+</form>
+<% } else { %>
+<p class="muted" style="margin-bottom:20px">You can view the team. Only Admins can add, remove, or change roles.</p>
+<% } %>
+
+<table>
+  <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Active</th><th>Last login</th><% if (it.canManage) { %><th></th><% } %></tr></thead>
+  <tbody>
+    <% it.users.forEach(function (u) { %>
+      <tr>
+        <td><%= u.name %><%= u.id === it.meId ? ' (you)' : '' %></td>
+        <td class="muted"><%= u.email %></td>
+        <td><span class="pill"><%= u.role %></span></td>
+        <td><%= u.isActive ? 'Yes' : 'No' %></td>
+        <td class="muted"><%= u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : '—' %></td>
+        <% if (it.canManage) { %>
+        <td style="text-align:right;white-space:nowrap">
+          <form method="post" action="/admin/team/<%= u.id %>/role" style="display:inline">
+            <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+            <select name="role" onchange="this.form.submit()">
+              <option value="STAFF" <%= u.role === 'STAFF' ? 'selected' : '' %>>Staff</option>
+              <option value="ADMIN" <%= u.role === 'ADMIN' ? 'selected' : '' %>>Admin</option>
+            </select>
+          </form>
+          <form method="post" action="/admin/team/<%= u.id %>/delete" style="display:inline" onsubmit="return confirm('Delete this user?')">
+            <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+            <button class="btn danger sm" type="submit">Delete</button>
+          </form>
+        </td>
+        <% } %>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

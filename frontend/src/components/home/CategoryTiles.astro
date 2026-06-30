@@ -1,0 +1,50 @@
+---
+import Img from '../ui/Img.astro';
+
+const tiles = [
+  {
+    title: 'Vessels',
+    href: '/objects?category=Vessels',
+    src: 'category-vessels',
+    alt: 'A tall sculptural ceramic vase with a matte charcoal finish against a bone background.',
+    offset: false,
+  },
+  {
+    title: 'Tableware',
+    href: '/objects?category=Tableware',
+    src: 'category-tableware',
+    alt: 'A curated stack of handmade ceramic bowls and plates in ash grey and raw clay.',
+    offset: true,
+  },
+  {
+    title: 'Sculptural Objects',
+    href: '/objects?category=Sculptural',
+    src: 'category-sculptural',
+    alt: 'An abstract ceramic sculpture of twisting organic forms in a chalky white finish.',
+    offset: false,
+  },
+];
+---
+
+<section class="bg-surface-container/40 py-section-gap">
+  <div class="wrap fade-up">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+      {tiles.map((tile) => (
+        <a href={tile.href} class={`group block ${tile.offset ? 'md:mt-24' : ''}`}>
+          <Img
+            src={tile.src}
+            alt={tile.alt}
+            aspect="3/4"
+            widths={[300, 450, 600]}
+            sizes="(max-width: 768px) 100vw, 33vw"
+            imgClass="saturate-[0.6] group-hover:saturate-100 transition-[filter,transform] duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+          />
+          <div class="mt-8 text-center">
+            <h3 class="font-display text-headline-sm mb-3">{tile.title}</h3>
+            <span class="btn-editorial text-label-caps uppercase opacity-60 group-hover:opacity-100">Explore</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

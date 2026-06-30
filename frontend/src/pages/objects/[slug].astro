@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Gallery from '../../components/product/Gallery.astro';
+import SpecTable from '../../components/product/SpecTable.astro';
+import AddToBag from '../../components/product/AddToBag.astro';
+import RelatedProducts from '../../components/product/RelatedProducts.astro';
+import WishlistButton from '../../components/product/WishlistButton.astro';
+import Img from '../../components/ui/Img.astro';
+import Icon from '../../components/ui/Icon.astro';
+import { getProduct, getRelated } from '../../lib/catalog';
+import { formatPrice } from '../../lib/format';
+
+const { slug } = Astro.params as { slug: string };
+const product = await getProduct(slug);
+if (!product) return Astro.redirect('/404');
+
+const related = await getRelated(slug, 4);
+const isLimited = product.badges.includes('Limited Edition') || Boolean(product.edition);
+const editionLine = product.edition ? `Edition of ${product.edition.count} · Limited` : product.badges[0] ?? '';
+const si = product.seenInInteriors;
+---
+
+<BaseLayout title={product.name} description={product.shortDescription}>
+  <div class="wrap pt-8">
+    <nav class="text-label-caps uppercase opacity-50 flex flex-wrap gap-2" aria-label="Breadcrumb">
+      <a href="/objects" class="hover:opacity-100 transition-opacity">Objects</a>
+      <span aria-hidden="true">/</span>
+      <a href={`/objects?category=${product.category}`} class="hover:opacity-100 transition-opacity">{product.category}</a>
+      <span aria-hidden="true">/</span>
+      <span class="text-on-surface opacity-100">{product.name}</span>
+    </nav>
+  </div>
+
+  <section class="wrap pt-8 pb-24 md:pb-section-gap grid md:grid-cols-2 gap-10 md:gap-gutter lg:gap-20 items-start">
+    <Gallery images={product.images} />
+
+    <div class="md:sticky md:top-24 flex flex-col fade-up">
+      {editionLine && <span class="text-label-caps uppercase text-secondary mb-4">{editionLine}</span>}
+
+      <div class="flex items-start justify-between gap-4">
+        <h1 class="font-display text-display-mobile leading-[1.1]">{product.name}</h1>
+        <WishlistButton slug={product.slug} class="mt-2 shrink-0" />
+      </div>
+
+      <p class="font-display text-headline-sm mt-3">{formatPrice(product.price)}</p>
+      {product.edition?.leadTime && (
+        <p class="text-caption text-on-surface-variant mt-2">{product.edition.leadTime}</p>
+      )}
+
+      <p class="text-body-md text-on-surface-variant leading-relaxed mt-8 max-w-prose">{product.description}</p>
+
+      <div class="mt-10">
+        <SpecTable specs={product.specs} edition={product.edition} />
+      </div>
+
+      {product.edition && (
+        <ul class="mt-8 flex flex-col gap-3">
+          <li class="flex gap-3 text-body-md text-on-surface-variant">
+            <Icon name="check" size={16} class="mt-1 shrink-0 text-secondary" />
+            Subtle handmade variations are inherent to the process.
+          </li>
+          {product.edition.certificate && (
+            <li class="flex gap-3 text-body-md text-on-surface-variant">
+              <Icon name="check" size={16} class="mt-1 shrink-0 text-secondary" />
+              Certificate of authenticity included.
+            </li>
+          )}
+          <li class="flex gap-3 text-body-md text-on-surface-variant">
+            <Icon name="check" size={16} class="mt-1 shrink-0 text-secondary" />
+            Archive reference {product.edition.ref}, documented and signed.
+          </li>
+        </ul>
+      )}
+
+      <div class="mt-10 flex flex-col gap-4">
+        <AddToBag slug={product.slug} />
+        <a href="/about" class="btn-ghost">Request Concierge Advice</a>
+      </div>
+
+      <div class="mt-12 hairline-t pt-8">
+        <span class="text-label-caps uppercase opacity-50">Curator’s Note</span>
+        <p class="text-body-md text-on-surface-variant italic leading-relaxed mt-4 max-w-prose">{product.curatorsNote}</p>
+      </div>
+    </div>
+  </section>
+
+  {si && (
+    <section class="relative pb-24">
+      <div class="relative h-[55vh] min-h-[380px] overflow-hidden">
+        <Img fill src={si.image.src} alt={si.image.alt} widths={[768, 1280, 1920]} sizes="100vw" />
+      </div>
+      <div class="wrap">
+        <div class="bg-surface p-8 md:p-12 max-w-md -mt-28 md:-mt-40 relative fade-up">
+          <h2 class="font-display text-headline-md mb-4">Seen in Interiors</h2>
+          <p class="text-body-md text-on-surface-variant leading-relaxed mb-6">{si.text}</p>
+          <a href="/atelier" class="btn-editorial text-label-caps uppercase">Explore the Atelier</a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <RelatedProducts
+    heading={isLimited ? 'Related objects from the same firing' : 'Complete the Setting'}
+    products={related}
+  />
+</BaseLayout>

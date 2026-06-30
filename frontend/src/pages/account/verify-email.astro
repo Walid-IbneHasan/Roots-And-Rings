@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getSession } from '../../lib/auth';
+const session = getSession(Astro);
+if (!session) return Astro.redirect('/account/login?next=/account/verify-email');
+const params = Astro.url.searchParams;
+const welcome = params.get('welcome');
+const error = params.get('error');
+const labelCls = 'text-label-caps uppercase opacity-60 flex flex-col gap-2';
+---
+<BaseLayout title="Verify Email" noindex={true}>
+  <section class="wrap py-16 md:py-24 max-w-md mx-auto">
+    <h1 class="font-display text-display-mobile mb-4">Verify your email</h1>
+    {welcome && <p class="text-body-md text-on-surface-variant mb-2">Welcome, {session.name.split(' ')[0]}! We sent a 6-digit code to {session.email}.</p>}
+    <p class="text-caption text-on-surface-variant mb-8">Dev note: the code is printed in the API server log (SMTP arrives in a later phase).</p>
+    {error && <p class="text-caption text-error border border-error px-4 py-3 mb-6">{error}</p>}
+    <form method="POST" action="/api/auth/verify" class="flex flex-col gap-6">
+      <label class={labelCls}>6-digit code<input name="code" required inputmode="numeric" pattern="\d{6}" class="input-minimal text-body-md" /></label>
+      <button class="btn-solid w-full">Verify</button>
+    </form>
+    <a href="/account" class="btn-editorial text-label-caps uppercase mt-6 inline-block">Skip for now</a>
+  </section>
+</BaseLayout>

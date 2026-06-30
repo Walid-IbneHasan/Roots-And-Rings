@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import FeaturedCollection from '../components/home/FeaturedCollection.astro';
+import CategoryTiles from '../components/home/CategoryTiles.astro';
+import AtelierQuote from '../components/home/AtelierQuote.astro';
+---
+
+<BaseLayout flushHeader={true} footerVariant="minimal">
+  <Hero />
+  <FeaturedCollection />
+  <CategoryTiles />
+  <AtelierQuote />
+</BaseLayout>

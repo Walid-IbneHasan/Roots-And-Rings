@@ -1,0 +1,24 @@
+---
+interface Props {
+  slug: string;
+  label?: string;
+  class?: string;
+}
+const { slug, label = 'Add to Bag', class: className = '' } = Astro.props;
+---
+
+<button type="button" data-add-to-bag={slug} class={`btn-solid w-full ${className}`}>
+  {label}
+</button>
+
+<script>
+  import { addToCart, openCart } from '../../lib/stores';
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-add-to-bag]');
+    if (!btn) return;
+    const slug = btn.getAttribute('data-add-to-bag');
+    if (!slug) return;
+    addToCart(slug);
+    openCart();
+  });
+</script>

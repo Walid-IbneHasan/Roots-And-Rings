@@ -1,0 +1,106 @@
+<% var p = it.product; %>
+<% var selColl = (p && p.collections) ? p.collections.map(function(c){return c.id}) : []; %>
+<% var badges = (p && p.badges) ? p.badges : []; %>
+<% var specs = (p && p.specs) ? p.specs : {}; %>
+<div class="toolbar">
+  <div><h1><%= p ? 'Edit' : 'New' %> Product</h1><% if (p && p.slug) { %><p class="sub muted"><%= p.slug %></p><% } %></div>
+  <a class="btn ghost" href="/admin/products">← All products</a>
+</div>
+
+<form class="stack" method="post" action="<%= p && p.id ? '/admin/products/' + p.id + '/edit' : '/admin/products/new' %>">
+  <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+  <div class="grid2">
+    <label>Name <input name="name" required value="<%= p ? p.name : '' %>" /></label>
+    <label>Subtitle <input name="subtitle" value="<%= p && p.subtitle ? p.subtitle : '' %>" /></label>
+  </div>
+  <div class="grid2">
+    <label>SKU <input name="sku" required value="<%= p ? p.sku : '' %>" /></label>
+    <label>Slug (optional) <input name="slug" value="<%= p ? p.slug : '' %>" placeholder="auto from name" /></label>
+  </div>
+  <div class="grid2">
+    <label>Category
+      <select name="categoryId">
+        <option value="">— none —</option>
+        <% it.categories.forEach(function (c) { %>
+          <option value="<%= c.id %>" <%= p && p.categoryId === c.id ? 'selected' : '' %>><%= c.name %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label>Clay body <input name="clayBody" value="<%= p && p.clayBody ? p.clayBody : '' %>" placeholder="Stoneware / Porcelain / Earthenware" /></label>
+  </div>
+
+  <label>Collections
+    <select name="collectionIds" multiple size="3">
+      <% it.collections.forEach(function (c) { %>
+        <option value="<%= c.id %>" <%= selColl.indexOf(c.id) >= 0 ? 'selected' : '' %>><%= c.name %></option>
+      <% }) %>
+    </select>
+  </label>
+
+  <fieldset style="border:1px solid var(--line);padding:12px">
+    <legend class="muted">Attributes</legend>
+    <% it.badgeValues.forEach(function (b) { %>
+      <label style="flex-direction:row;align-items:center;text-transform:none;letter-spacing:0">
+        <input type="checkbox" name="badges" value="<%= b %>" <%= badges.indexOf(b) >= 0 ? 'checked' : '' %> style="width:auto" /> <%= b %>
+      </label>
+    <% }) %>
+  </fieldset>
+
+  <label>Short description <input name="shortDescription" required value="<%= p ? p.shortDescription : '' %>" /></label>
+  <label>Description (HTML allowed; sanitized) <textarea name="description"><%= p ? p.description : '' %></textarea></label>
+  <label>Curator's note <textarea name="curatorsNote"><%= p && p.curatorsNote ? p.curatorsNote : '' %></textarea></label>
+
+  <div class="grid2">
+    <label>Base price (<%= 'BDT' %>) <input type="number" step="0.01" name="basePrice" required value="<%= p ? p.basePrice : '' %>" /></label>
+    <label>Sale price <input type="number" step="0.01" name="salePrice" value="<%= p && p.salePrice != null ? p.salePrice : '' %>" /></label>
+  </div>
+  <div class="grid2">
+    <label>Flash price <input type="number" step="0.01" name="flashPrice" value="<%= p && p.flashPrice != null ? p.flashPrice : '' %>" /></label>
+    <label>Currency <input name="currency" value="<%= p ? p.currency : 'BDT' %>" /></label>
+  </div>
+  <div class="grid2">
+    <label>Flash starts <input type="datetime-local" name="flashStartAt" value="<%= p && p.flashStartAt ? new Date(p.flashStartAt).toISOString().slice(0,16) : '' %>" /></label>
+    <label>Flash ends <input type="datetime-local" name="flashEndAt" value="<%= p && p.flashEndAt ? new Date(p.flashEndAt).toISOString().slice(0,16) : '' %>" /></label>
+  </div>
+
+  <fieldset style="border:1px solid var(--line);padding:12px">
+    <legend class="muted">Specifications</legend>
+    <div class="grid2">
+      <label>Dimensions <input name="specDimensions" value="<%= specs.dimensions || '' %>" /></label>
+      <label>Weight <input name="specWeight" value="<%= specs.weight || '' %>" /></label>
+    </div>
+    <div class="grid2">
+      <label>Clay body <input name="specClayBody" value="<%= specs.clayBody || '' %>" /></label>
+      <label>Glaze <input name="specGlaze" value="<%= specs.glaze || '' %>" /></label>
+    </div>
+    <label>Firing <input name="specFiring" value="<%= specs.firing || '' %>" /></label>
+  </fieldset>
+
+  <div class="grid2">
+    <label>Stock (standard variant) <input type="number" name="stock" value="<%= it.defaultStock != null ? it.defaultStock : '' %>" placeholder="0" /></label>
+    <label>Min per order <input type="number" name="minPerOrder" value="<%= p ? p.minPerOrder : 1 %>" /></label>
+  </div>
+  <div class="grid2">
+    <label>Max per order <input type="number" name="maxPerOrder" value="<%= p && p.maxPerOrder != null ? p.maxPerOrder : '' %>" /></label>
+    <label>&nbsp;</label>
+  </div>
+  <div class="grid2">
+    <label>Featured order <input type="number" name="featuredOrder" value="<%= p && p.featuredOrder != null ? p.featuredOrder : '' %>" /></label>
+    <label>Published at <input type="date" name="publishedAt" value="<%= p && p.publishedAt ? new Date(p.publishedAt).toISOString().slice(0,10) : '' %>" /></label>
+  </div>
+
+  <div style="display:flex;gap:24px">
+    <label style="flex-direction:row;align-items:center;text-transform:none"><input type="checkbox" name="isActive" <%= !p || p.isActive ? 'checked' : '' %> style="width:auto" /> Active</label>
+    <label style="flex-direction:row;align-items:center;text-transform:none"><input type="checkbox" name="isFeatured" <%= p && p.isFeatured ? 'checked' : '' %> style="width:auto" /> Featured</label>
+    <label style="flex-direction:row;align-items:center;text-transform:none"><input type="checkbox" name="allowBackorder" <%= p && p.allowBackorder ? 'checked' : '' %> style="width:auto" /> Allow backorder</label>
+  </div>
+
+  <div class="grid2">
+    <label>SEO title <input name="seoTitle" value="<%= p && p.seoTitle ? p.seoTitle : '' %>" /></label>
+    <label>SEO description <input name="seoDescription" value="<%= p && p.seoDescription ? p.seoDescription : '' %>" /></label>
+  </div>
+
+  <div class="actions"><button class="btn" type="submit">Save</button><a class="btn ghost" href="/admin/products">Cancel</a></div>
+</form>
+
+<%~ it.imagesHtml %>

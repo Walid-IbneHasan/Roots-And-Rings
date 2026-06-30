@@ -1,0 +1,24 @@
+<h1>Dashboard</h1>
+<p class="sub">Overview of your store.</p>
+<div class="row">
+  <div class="card"><div class="n"><%= it.counts.products %></div><div class="l">Products</div></div>
+  <div class="card"><div class="n"><%= it.counts.categories %></div><div class="l">Categories</div></div>
+  <div class="card"><div class="n"><%= it.counts.users %></div><div class="l">Team</div></div>
+  <div class="card"><div class="n"><%= it.counts.lowStock %></div><div class="l">Low stock</div></div>
+</div>
+
+<h2 style="margin-top:36px">Recent activity</h2>
+<table>
+  <thead><tr><th>When</th><th>Actor</th><th>Action</th><th>Entity</th></tr></thead>
+  <tbody>
+    <% if (!it.recent.length) { %><tr><td colspan="4" class="muted">No activity yet.</td></tr><% } %>
+    <% it.recent.forEach(function (r) { %>
+      <tr>
+        <td class="muted"><%= new Date(r.createdAt).toLocaleString() %></td>
+        <td><%= r.actorEmail %></td>
+        <td><%= r.action %></td>
+        <td><%= r.entity %><%= r.entityId ? ' #' + String(r.entityId).slice(0,8) : '' %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

@@ -1,0 +1,26 @@
+---
+import Img from '../ui/Img.astro';
+---
+
+<section class="relative min-h-[90vh] md:min-h-screen flex items-center justify-center overflow-hidden">
+  <Img
+    fill
+    src="hero"
+    alt="A singular raw, textured ceramic vessel resting on a smooth stone plinth in raking light."
+    priority
+    widths={[768, 1280, 1920, 2400]}
+    sizes="100vw"
+    imgClass="object-center"
+  />
+  <div class="absolute inset-0 bg-surface/20"></div>
+
+  <div class="relative wrap flex flex-col items-center text-center fade-up">
+    <h1 class="font-display text-display-mobile md:text-display-lg italic text-on-surface max-w-3xl text-balance">
+      Objects shaped by earth, fire, hand, and time.
+    </h1>
+    <p class="text-body-lg text-on-surface/80 mt-8 max-w-md">
+      Collectible ceramics and home objects, made in small editions.
+    </p>
+    <a href="/objects" class="btn-editorial text-label-caps uppercase mt-10">Explore the Atelier</a>
+  </div>
+</section>

@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Img from '../../components/ui/Img.astro';
+import FilterSidebar from '../../components/catalog/FilterSidebar.astro';
+import SortControl from '../../components/catalog/SortControl.astro';
+import LoadMore from '../../components/catalog/LoadMore.astro';
+import ProductCard from '../../components/product/ProductCard.astro';
+import Icon from '../../components/ui/Icon.astro';
+import { getProducts, getFacets } from '../../lib/catalog';
+
+const products = await getProducts({ sort: 'newest' });
+const facets = await getFacets();
+---
+
+<BaseLayout title="Objects" description="Small-batch ceramic works for quiet interiors.">
+  <!-- Hero band -->
+  <section class="relative h-[42vh] min-h-[300px] flex items-center justify-center overflow-hidden">
+    <Img
+      fill
+      src="objects-hero"
+      alt="Pale handmade ceramic vessels grouped in soft, raking light."
+      priority
+      widths={[768, 1280, 1920]}
+      sizes="100vw"
+    />
+    <div class="absolute inset-0 bg-surface/35"></div>
+    <div class="relative text-center fade-up px-6">
+      <h1 class="font-display text-display-mobile md:text-display-lg">Objects</h1>
+      <p class="text-body-lg text-on-surface-variant mt-3">Small-batch ceramic works for quiet interiors.</p>
+    </div>
+  </section>
+
+  <section class="wrap py-12 md:py-16">
+    <!-- Controls -->
+    <div class="flex items-center justify-between gap-4 pb-6 hairline-b">
+      <div class="flex items-center gap-4">
+        <button type="button" data-filters-open class="md:hidden inline-flex items-center gap-2 text-label-caps uppercase border border-outline px-4 py-2">
+          <Icon name="menu" size={14} /> Filters
+        </button>
+        <span class="text-label-caps uppercase opacity-60"><span data-count>{products.length}</span> Objects</span>
+      </div>
+      <SortControl />
+    </div>
+
+    <!-- Sidebar + grid -->
+    <div class="grid md:grid-cols-[200px_1fr] lg:grid-cols-[240px_1fr] gap-10 md:gap-gutter mt-10">
+      <div class="md:sticky md:top-24 md:self-start">
+        <FilterSidebar facets={facets} />
+      </div>
+
+      <div>
+        <div data-product-grid class="grid grid-cols-2 lg:grid-cols-3 gap-x-gutter gap-y-12 md:gap-y-16">
+          {products.map((p) => (
+            <div
+              class="product-cell"
+              data-category={p.category}
+              data-clay={p.clayBody}
+              data-badges={p.badges.join('|')}
+              data-price={p.price}
+              data-date={p.createdAt}
+            >
+              <ProductCard product={p} sizes="(max-width: 768px) 50vw, (max-width: 1024px) 40vw, 25vw" />
+            </div>
+          ))}
+        </div>
+
+        <p data-empty hidden class="text-body-md text-on-surface-variant py-24 text-center">
+          No objects match these filters.
+        </p>
+
+        <LoadMore />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import '../../scripts/filters.ts';
+</script>

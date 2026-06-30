@@ -1,0 +1,15 @@
+<div style="max-width:380px;margin:8vh auto 0">
+  <div style="font-family:Georgia,serif;font-size:24px;text-align:center;margin-bottom:6px">ROOTS &amp; RINGS</div>
+  <p class="sub" style="text-align:center">Back office</p>
+  <% if (it.error) { %><div class="flash error"><%= it.error %></div><% } %>
+  <form class="stack" method="post" action="/admin/login">
+    <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+    <label>Email
+      <input type="email" name="email" required autofocus value="<%= it.email || '' %>" />
+    </label>
+    <label>Password
+      <input type="password" name="password" required />
+    </label>
+    <button class="btn" type="submit">Sign in</button>
+  </form>
+</div>

@@ -1,0 +1,61 @@
+<% var o = it.order; %>
+<div class="toolbar">
+  <div><h1><%= o.orderNumber %></h1><p class="sub muted"><%= new Date(o.createdAt).toLocaleString() %> · <span class="pill"><%= o.status %></span></p></div>
+  <a class="btn ghost" href="/admin/orders">← All orders</a>
+</div>
+
+<div class="row" style="align-items:flex-start">
+  <div class="card" style="flex:2">
+    <h2>Items</h2>
+    <table>
+      <thead><tr><th>Item</th><th>SKU</th><th>Unit</th><th>Qty</th><th>Total</th></tr></thead>
+      <tbody>
+        <% o.items.forEach(function (i) { %>
+          <tr><td><%= i.productName %></td><td class="muted"><%= i.sku %></td><td>৳<%= i.unitPrice %></td><td><%= i.quantity %></td><td>৳<%= i.lineTotal %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <div style="margin-top:14px;text-align:right">
+      <div class="muted">Subtotal ৳<%= o.subtotal %> · Shipping ৳<%= o.shippingTotal %></div>
+      <div style="font-family:Georgia,serif;font-size:20px">Total ৳<%= o.grandTotal %></div>
+    </div>
+  </div>
+
+  <div class="card" style="flex:1">
+    <h2>Customer</h2>
+    <p class="muted" style="margin:0 0 12px"><%= o.guestEmail %><br><%= o.guestPhone || '' %></p>
+    <h2>Shipping</h2>
+    <p class="muted" style="margin:0 0 12px">
+      <%= o.shippingSnapshot.name || '' %><br>
+      <%= o.shippingSnapshot.line1 || '' %><br>
+      <%= (o.shippingSnapshot.city || '') + ', ' + (o.shippingSnapshot.district || '') %> <%= o.shippingSnapshot.postalCode || '' %>
+    </p>
+    <h2>Payment</h2>
+    <p class="muted" style="margin:0"><%= o.payments[0] ? o.payments[0].provider + ' · ' + o.payments[0].status : '—' %></p>
+  </div>
+</div>
+
+<div class="row" style="margin-top:20px">
+  <div class="card">
+    <h2>Update status</h2>
+    <% if (!it.allowed.length) { %><p class="muted">No further transitions.</p><% } %>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+      <% it.allowed.forEach(function (t) { %>
+        <form method="post" action="/admin/orders/<%= o.id %>/status">
+          <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+          <input type="hidden" name="status" value="<%= t %>" />
+          <button class="btn sm" type="submit"><%= t %></button>
+        </form>
+      <% }) %>
+    </div>
+    <p class="muted" style="margin-top:10px;font-size:12px">Marking COD as DELIVERED also settles payment to PAID.</p>
+  </div>
+  <div class="card">
+    <h2>Refund</h2>
+    <form method="post" action="/admin/orders/<%= o.id %>/refund" style="display:flex;gap:10px;align-items:flex-end">
+      <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+      <label style="flex:1">Amount (৳) <input type="number" step="0.01" name="amount" value="<%= o.grandTotal %>" /></label>
+      <button class="btn danger sm" type="submit">Refund &amp; restock</button>
+    </form>
+  </div>
+</div>

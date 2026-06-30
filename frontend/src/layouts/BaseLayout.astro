@@ -1,0 +1,88 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource/eb-garamond/400.css';
+import '@fontsource/eb-garamond/400-italic.css';
+import '@fontsource/eb-garamond/500.css';
+import '@fontsource/eb-garamond/600.css';
+import '../styles/global.css';
+
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import MobileMenu from '../components/layout/MobileMenu.astro';
+import CartDrawer from '../components/cart/CartDrawer.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  flushHeader?: boolean;
+  footerVariant?: 'minimal' | 'full';
+}
+const {
+  title,
+  description = site.description,
+  image = site.ogImage,
+  noindex = false,
+  flushHeader = false,
+  footerVariant = 'full',
+} = Astro.props;
+
+const pageTitle = title ? `${title} — ${site.name}` : site.title;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogImage = new URL(image, site.url).href;
+---
+
+<!doctype html>
+<html lang={site.locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#fef9f1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-on-surface focus:text-surface focus:px-4 focus:py-2 focus:text-label-caps focus:uppercase"
+    >
+      Skip to content
+    </a>
+
+    <Header flush={flushHeader} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer variant={footerVariant} />
+    <MobileMenu />
+    <CartDrawer />
+
+    <script>
+      import '../scripts/reveal.ts';
+      import '../scripts/header.ts';
+      import '../scripts/cart-drawer.ts';
+      import '../scripts/wishlist.ts';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+<div class="toolbar">
+  <div><h1>Categories</h1><p class="sub">Product types &amp; collections.</p></div>
+  <a class="btn" href="/admin/categories/new">New Category</a>
+</div>
+<table>
+  <thead><tr><th>Name</th><th>Kind</th><th>Slug</th><th>Products</th><th>Active</th><th></th></tr></thead>
+  <tbody>
+    <% it.cats.forEach(function (c) { %>
+      <tr>
+        <td><%= c.name %></td>
+        <td><span class="pill"><%= c.kind === 'PRODUCT_TYPE' ? 'Type' : 'Collection' %></span></td>
+        <td class="muted"><%= c.slug %></td>
+        <td><%= c._count.typeProducts + c._count.collectionProducts %></td>
+        <td><%= c.isActive ? 'Yes' : 'No' %></td>
+        <td style="text-align:right;white-space:nowrap">
+          <a class="btn ghost sm" href="/admin/categories/<%= c.id %>/edit">Edit</a>
+          <form method="post" action="/admin/categories/<%= c.id %>/delete" style="display:inline" onsubmit="return confirm('Delete this category?')">
+            <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+            <button class="btn danger sm" type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

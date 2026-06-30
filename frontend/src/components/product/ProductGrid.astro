@@ -1,0 +1,15 @@
+---
+import ProductCard from './ProductCard.astro';
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  products: Product[];
+  sizes?: string;
+  class?: string;
+}
+const { products, sizes, class: className = '' } = Astro.props;
+---
+
+<div class={`grid grid-cols-2 lg:grid-cols-3 gap-x-gutter gap-y-12 md:gap-y-16 ${className}`}>
+  {products.map((product) => <ProductCard product={product} sizes={sizes} />)}
+</div>

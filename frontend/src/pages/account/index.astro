@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AccountNav from '../../components/account/AccountNav.astro';
+import { getSession, bearer } from '../../lib/auth';
+import { formatPrice } from '../../lib/format';
+const session = getSession(Astro);
+if (!session) return Astro.redirect('/account/login?next=/account');
+const API = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:4000';
+let data: { customer: any; recentOrders: any[] } = { customer: { name: session.name, email: session.email, emailVerifiedAt: null }, recentOrders: [] };
+try {
+  const res = await fetch(`${API}/api/account`, { headers: { authorization: `Bearer ${bearer(Astro)}` } });
+  if (res.ok) data = await res.json();
+} catch { /* fall back to session basics */ }
+const verified = Astro.url.searchParams.get('verified');
+---
+<BaseLayout title="My Account" noindex={true}>
+  <section class="wrap py-16 md:py-24">
+    <h1 class="font-display text-display-mobile md:text-display-lg mb-12">Hello, {data.customer.name.split(' ')[0]}.</h1>
+    {verified && <p class="text-caption text-secondary border border-secondary px-4 py-3 mb-8">Email verified — thank you.</p>}
+    <div class="grid lg:grid-cols-[200px_1fr] gap-12 lg:gap-20 items-start">
+      <AccountNav active="overview" />
+      <div class="flex flex-col gap-10">
+        {!data.customer.emailVerifiedAt && (
+          <a href="/account/verify-email" class="text-caption border border-secondary text-secondary px-4 py-3">Your email isn't verified yet — verify it →</a>
+        )}
+        <div>
+          <h2 class="font-display text-headline-sm mb-5">Recent orders</h2>
+          {data.recentOrders.length === 0 ? (
+            <p class="text-body-md text-on-surface-variant">No orders yet. <a href="/objects" class="btn-editorial">Browse Objects</a></p>
+          ) : (
+            <div class="flex flex-col hairline-t">
+              {data.recentOrders.map((o) => (
+                <a href={`/account/orders/${o.orderNumber}`} class="flex justify-between items-center py-4 hairline-b hover:opacity-70 transition-opacity">
+                  <span class="text-body-md">{o.orderNumber} <span class="opacity-50 text-label-caps uppercase ml-2">{o.status}</span></span>
+                  <span class="text-body-md">{formatPrice(o.grand)}</span>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

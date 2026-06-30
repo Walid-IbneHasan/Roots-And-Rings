@@ -1,0 +1,21 @@
+---
+import ProductCard from './ProductCard.astro';
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  heading: string;
+  products: Product[];
+}
+const { heading, products } = Astro.props;
+---
+
+{products.length > 0 && (
+  <section class="wrap py-section-gap">
+    <h2 class="font-display text-headline-md mb-12 fade-up">{heading}</h2>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-gutter gap-y-12">
+      {products.map((product) => (
+        <ProductCard product={product} sizes="(max-width: 768px) 50vw, 25vw" />
+      ))}
+    </div>
+  </section>
+)}

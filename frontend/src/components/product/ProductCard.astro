@@ -1,0 +1,36 @@
+---
+import Img from '../ui/Img.astro';
+import Badge from './Badge.astro';
+import WishlistButton from './WishlistButton.astro';
+import { formatPrice } from '../../lib/format';
+import type { Product } from '../../lib/schema';
+
+interface Props {
+  product: Product;
+  sizes?: string;
+}
+const { product, sizes = '(max-width: 768px) 50vw, 33vw' } = Astro.props;
+const badge = product.badges[0];
+---
+
+<article class="group relative fade-up">
+  <a href={`/objects/${product.slug}`} class="block">
+    <div class="relative">
+      <Img
+        src={product.images[0].src}
+        alt={product.images[0].alt}
+        aspect="4/5"
+        widths={[300, 450, 600, 800]}
+        sizes={sizes}
+        imgClass="saturate-[0.72] group-hover:saturate-100 transition-[transform,filter] duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+      />
+      {badge && <Badge label={badge} class="absolute top-4 left-4" />}
+    </div>
+    <div class="mt-5">
+      <span class="text-label-caps uppercase opacity-50">{product.subtitle}</span>
+      <h3 class="font-display text-headline-sm mt-1.5">{product.name}</h3>
+      <p class="text-body-md text-on-surface-variant mt-1">{formatPrice(product.price)}</p>
+    </div>
+  </a>
+  <WishlistButton slug={product.slug} class="absolute top-3 right-3 z-10" />
+</article>

@@ -1,0 +1,32 @@
+<div class="toolbar">
+  <div><h1>Products</h1><p class="sub"><%= it.products.length %> products</p></div>
+  <a class="btn" href="/admin/products/new">New Product</a>
+</div>
+<form method="get" action="/admin/products" style="margin-bottom:16px">
+  <input name="q" value="<%= it.q %>" placeholder="Search by name…" style="width:280px" />
+  <button class="btn ghost sm" type="submit">Search</button>
+</form>
+<table>
+  <thead><tr><th></th><th>Name</th><th>SKU</th><th>Category</th><th>Price</th><th>Featured</th><th>Active</th><th></th></tr></thead>
+  <tbody>
+    <% if (!it.products.length) { %><tr><td colspan="8" class="muted">No products found.</td></tr><% } %>
+    <% it.products.forEach(function (p) { %>
+      <tr>
+        <td><% if (p.images[0]) { %><img class="thumb" src="<%= p.images[0].url %>" alt="" /><% } else { %><div class="thumb"></div><% } %></td>
+        <td><a href="/admin/products/<%= p.id %>/edit"><%= p.name %></a></td>
+        <td class="muted"><%= p.sku %></td>
+        <td><%= p.category ? p.category.name : '—' %></td>
+        <td><%= p.currency %> <%= p.basePrice %></td>
+        <td><%= p.isFeatured ? '★' : '' %></td>
+        <td><%= p.isActive ? 'Yes' : 'No' %></td>
+        <td style="text-align:right;white-space:nowrap">
+          <a class="btn ghost sm" href="/admin/products/<%= p.id %>/edit">Edit</a>
+          <form method="post" action="/admin/products/<%= p.id %>/delete" style="display:inline" onsubmit="return confirm('Delete this product?')">
+            <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+            <button class="btn danger sm" type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

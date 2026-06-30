@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AccountNav from '../../components/account/AccountNav.astro';
+import { getSession, bearer } from '../../lib/auth';
+const session = getSession(Astro);
+if (!session) return Astro.redirect('/account/login?next=/account/addresses');
+const API = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:4000';
+let addresses: any[] = [];
+try {
+  const res = await fetch(`${API}/api/account/addresses`, { headers: { authorization: `Bearer ${bearer(Astro)}` } });
+  if (res.ok) addresses = await res.json();
+} catch { /* empty */ }
+const labelCls = 'text-label-caps uppercase opacity-60 flex flex-col gap-2';
+---
+<BaseLayout title="Addresses" noindex={true}>
+  <section class="wrap py-16 md:py-24" data-account>
+    <h1 class="font-display text-display-mobile md:text-display-lg mb-12">Addresses</h1>
+    <div class="grid lg:grid-cols-[200px_1fr] gap-12 lg:gap-20 items-start">
+      <AccountNav active="addresses" />
+      <div class="flex flex-col gap-12 max-w-2xl">
+        <p data-account-error hidden class="text-caption text-error border border-error px-4 py-3"></p>
+
+        {addresses.length > 0 && (
+          <div class="grid sm:grid-cols-2 gap-5">
+            {addresses.map((a) => (
+              <div class={`p-6 hairline ${a.isDefault ? 'bg-surface-container-low' : ''}`}>
+                {a.isDefault && <span class="text-label-caps uppercase text-secondary block mb-2">Default</span>}
+                <p class="text-body-md">{a.name}</p>
+                <p class="text-body-sm text-on-surface-variant">{a.line1}{a.line2 ? `, ${a.line2}` : ''}</p>
+                <p class="text-body-sm text-on-surface-variant">{a.city}, {a.district} {a.postalCode ?? ''}</p>
+                <p class="text-body-sm text-on-surface-variant mb-4">{a.phone}</p>
+                <div class="flex gap-4">
+                  {!a.isDefault && <button data-address-action="default" data-id={a.id} class="btn-editorial text-label-caps uppercase">Make default</button>}
+                  <button data-address-action="delete" data-id={a.id} class="btn-editorial text-label-caps uppercase opacity-60">Delete</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div>
+          <h2 class="font-display text-headline-sm mb-6">Add an address</h2>
+          <form data-address-form class="grid sm:grid-cols-2 gap-6">
+            <label class={labelCls}>Name<input name="name" required class="input-minimal text-body-md" /></label>
+            <label class={labelCls}>Phone<input name="phone" required class="input-minimal text-body-md" /></label>
+            <label class={`${labelCls} sm:col-span-2`}>Address line 1<input name="line1" required class="input-minimal text-body-md" /></label>
+            <label class={`${labelCls} sm:col-span-2`}>Address line 2<input name="line2" class="input-minimal text-body-md" /></label>
+            <label class={labelCls}>City<input name="city" required class="input-minimal text-body-md" /></label>
+            <label class={labelCls}>District<input name="district" required class="input-minimal text-body-md" /></label>
+            <label class={labelCls}>Postal code<input name="postalCode" class="input-minimal text-body-md" /></label>
+            <label class="flex items-center gap-3 text-body-md sm:col-span-2"><input type="checkbox" name="isDefault" /> Set as default</label>
+            <button class="btn-solid w-fit sm:col-span-2">Add Address</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<script>
+  import '../../scripts/account.ts';
+</script>

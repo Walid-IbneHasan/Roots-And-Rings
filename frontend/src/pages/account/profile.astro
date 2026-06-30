@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AccountNav from '../../components/account/AccountNav.astro';
+import { getSession, bearer } from '../../lib/auth';
+const session = getSession(Astro);
+if (!session) return Astro.redirect('/account/login?next=/account/profile');
+const API = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:4000';
+let customer: any = { name: session.name, email: session.email, phone: '', imageUrl: null };
+try {
+  const res = await fetch(`${API}/api/account`, { headers: { authorization: `Bearer ${bearer(Astro)}` } });
+  if (res.ok) customer = (await res.json()).customer;
+} catch { /* defaults */ }
+const labelCls = 'text-label-caps uppercase opacity-60 flex flex-col gap-2';
+---
+<BaseLayout title="Profile" noindex={true}>
+  <section class="wrap py-16 md:py-24" data-account>
+    <h1 class="font-display text-display-mobile md:text-display-lg mb-12">Profile</h1>
+    <div class="grid lg:grid-cols-[200px_1fr] gap-12 lg:gap-20 items-start">
+      <AccountNav active="profile" />
+      <div class="flex flex-col gap-12 max-w-lg">
+        <p data-account-error hidden class="text-caption text-error border border-error px-4 py-3"></p>
+
+        <div class="flex items-center gap-5">
+          {customer.imageUrl
+            ? <img src={customer.imageUrl} alt="" class="w-20 h-20 rounded-full object-cover" />
+            : <div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center font-display text-headline-sm">{customer.name.charAt(0)}</div>}
+          <label class="btn-editorial text-label-caps uppercase cursor-pointer">
+            Change photo<input type="file" accept="image/*" data-avatar-input class="hidden" />
+          </label>
+        </div>
+
+        <form data-profile-form class="flex flex-col gap-6">
+          <label class={labelCls}>Name<input name="name" value={customer.name} required class="input-minimal text-body-md" /></label>
+          <label class={labelCls}>Email<input value={customer.email} disabled class="input-minimal text-body-md opacity-60" /></label>
+          <label class={labelCls}>Phone<input name="phone" value={customer.phone ?? ''} class="input-minimal text-body-md" /></label>
+          <button class="btn-solid w-fit">Save changes</button>
+        </form>
+
+        <div>
+          <h2 class="font-display text-headline-sm mb-4">Change password</h2>
+          <form data-password-form class="flex flex-col gap-5 max-w-sm">
+            <button type="button" data-password-request class="btn-editorial text-label-caps uppercase w-fit">Email me a change code</button>
+            <p data-password-msg hidden class="text-caption text-secondary"></p>
+            <label class={labelCls}>Change code<input name="code" inputmode="numeric" pattern="\d{6}" class="input-minimal text-body-md" /></label>
+            <label class={labelCls}>Current password<input type="password" name="currentPassword" autocomplete="current-password" class="input-minimal text-body-md" /></label>
+            <label class={labelCls}>New password<input type="password" name="newPassword" minlength="8" autocomplete="new-password" class="input-minimal text-body-md" /></label>
+            <button class="btn-solid w-fit">Update password</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<script>
+  import '../../scripts/account.ts';
+</script>

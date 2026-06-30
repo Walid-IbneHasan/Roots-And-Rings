@@ -1,0 +1,57 @@
+---
+import { mainNav, minimalFooterNav } from '../../data/navigation';
+import { site } from '../../data/site';
+import Icon from '../ui/Icon.astro';
+---
+
+<div
+  id="mobile-menu"
+  class="mobile-menu fixed inset-0 z-[60] bg-surface flex flex-col"
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Site menu"
+>
+  <div class="wrap flex items-center justify-between py-4">
+    <span class="font-display text-headline-sm tracking-tight">{site.name.toUpperCase()}</span>
+    <button type="button" data-menu-close aria-label="Close menu" class="inline-flex opacity-70 hover:opacity-100 transition-opacity">
+      <Icon name="close" size={22} />
+    </button>
+  </div>
+
+  <nav class="wrap flex-1 flex flex-col justify-center gap-6" aria-label="Mobile">
+    {mainNav.map((link) => (
+      <a href={link.href} class="font-display text-display-mobile leading-none hover:opacity-60 transition-opacity">{link.label}</a>
+    ))}
+  </nav>
+
+  <div class="wrap py-10 flex flex-col gap-5">
+    <a href="/cart" class="btn-editorial text-label-caps uppercase w-fit">View Bag</a>
+    <div class="flex flex-wrap gap-x-8 gap-y-3 text-label-caps uppercase opacity-60">
+      {minimalFooterNav.map((link) => <a href={link.href} class="hover:opacity-100 transition-opacity">{link.label}</a>)}
+    </div>
+  </div>
+</div>
+
+<style>
+  .mobile-menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition:
+      opacity 0.4s var(--ease-gallery),
+      transform 0.4s var(--ease-gallery),
+      visibility 0s linear 0.4s;
+  }
+  .mobile-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 0.4s var(--ease-gallery),
+      transform 0.4s var(--ease-gallery);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu { transition: none; }
+  }
+</style>

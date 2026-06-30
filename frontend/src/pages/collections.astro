@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Img from '../components/ui/Img.astro';
+import { getCollections } from '../lib/catalog';
+
+const collections = await getCollections();
+---
+
+<BaseLayout title="Collections" description="Curated collections of small-batch ceramics from the Roots & Rings atelier.">
+  <section class="wrap pt-16 md:pt-24 pb-12 text-center fade-up">
+    <span class="text-label-caps uppercase opacity-60 mb-6 block">Collections</span>
+    <h1 class="font-display text-display-mobile md:text-display-lg">Bodies of work, gathered by hand.</h1>
+    <p class="text-body-lg text-on-surface-variant mt-6 max-w-xl mx-auto">
+      Each collection is a single conversation between maker, material, and fire.
+    </p>
+  </section>
+
+  <section class="wrap pb-section-gap">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter md:gap-y-20">
+      {collections.map((c, i) => (
+        <a href="/objects" class={`group block fade-up ${i % 2 === 1 ? 'md:mt-20' : ''}`}>
+          <Img
+            src={c.image.src}
+            alt={c.image.alt}
+            aspect="3/4"
+            widths={[300, 500, 700]}
+            sizes="(max-width: 768px) 100vw, 33vw"
+            imgClass="saturate-[0.7] group-hover:saturate-100 transition-[filter,transform] duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+          />
+          <div class="mt-6">
+            <h2 class="font-display text-headline-sm">{c.name}</h2>
+            <p class="text-body-md text-on-surface-variant italic mt-2">{c.tagline}</p>
+            <span class="btn-editorial text-label-caps uppercase mt-4 inline-block opacity-60 group-hover:opacity-100">View Pieces</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

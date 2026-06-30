@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getSession } from '../../lib/auth';
+if (getSession(Astro)) return Astro.redirect('/account');
+const error = Astro.url.searchParams.get('error');
+const labelCls = 'text-label-caps uppercase opacity-60 flex flex-col gap-2';
+---
+<BaseLayout title="Create Account" noindex={true}>
+  <section class="wrap py-16 md:py-24 max-w-md mx-auto">
+    <h1 class="font-display text-display-mobile mb-8">Create account</h1>
+    {error && <p class="text-caption text-error border border-error px-4 py-3 mb-6">{error}</p>}
+    <form method="POST" action="/api/auth/register" class="flex flex-col gap-6">
+      <label class={labelCls}>Name<input name="name" required autocomplete="name" class="input-minimal text-body-md" /></label>
+      <label class={labelCls}>Email<input type="email" name="email" required autocomplete="email" class="input-minimal text-body-md" /></label>
+      <label class={labelCls}>Password<input type="password" name="password" required minlength="8" autocomplete="new-password" class="input-minimal text-body-md" /></label>
+      <button class="btn-solid w-full">Create Account</button>
+    </form>
+    <a href="/account/login" class="btn-editorial text-label-caps uppercase mt-6 inline-block">Already have an account? Sign in</a>
+  </section>
+</BaseLayout>

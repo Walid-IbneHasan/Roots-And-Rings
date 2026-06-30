@@ -1,0 +1,20 @@
+---
+import Icon from '../ui/Icon.astro';
+---
+<div class="flex items-center gap-3">
+  <label for="sort" class="text-label-caps uppercase opacity-60">Sort By</label>
+  <div class="relative">
+    <select
+      id="sort"
+      data-sort
+      class="appearance-none bg-transparent text-label-caps uppercase pr-6 cursor-pointer focus:outline-none"
+    >
+      <option value="newest">Newest</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+    </select>
+    <span class="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2">
+      <Icon name="chevron-down" size={14} />
+    </span>
+  </div>
+</div>

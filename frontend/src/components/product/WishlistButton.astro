@@ -1,0 +1,27 @@
+---
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  slug: string;
+  size?: number;
+  class?: string;
+}
+const { slug, size = 18, class: className = '' } = Astro.props;
+---
+
+<button
+  type="button"
+  data-wishlist={slug}
+  aria-pressed="false"
+  aria-label="Add to wishlist"
+  class={`wishlist-btn relative grid place-items-center w-9 h-9 bg-surface/80 backdrop-blur-sm text-on-surface transition-opacity hover:bg-surface ${className}`}
+>
+  <span class="heart-outline grid place-items-center"><Icon name="heart" size={size} /></span>
+  <span class="heart-solid absolute inset-0 grid place-items-center opacity-0"><Icon name="heart-filled" size={size} /></span>
+</button>
+
+<style>
+  .wishlist-btn .heart-solid { transition: opacity 0.25s var(--ease-gallery); }
+  .wishlist-btn.is-active .heart-outline { opacity: 0; }
+  .wishlist-btn.is-active .heart-solid { opacity: 1; }
+</style>

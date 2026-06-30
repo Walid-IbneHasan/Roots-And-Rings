@@ -1,0 +1,76 @@
+---
+import { mainNav } from '../../data/navigation';
+import { site } from '../../data/site';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  flush?: boolean; // transparent over a hero until scrolled
+}
+const { flush = false } = Astro.props;
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) =>
+  href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
+---
+
+<header
+  data-header
+  data-flush={flush ? 'true' : 'false'}
+  class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-md hairline-b"
+>
+  <div class="wrap py-4 md:py-5 grid grid-cols-[auto_1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center gap-4">
+    <!-- Left: primary nav (desktop) / menu trigger (mobile) -->
+    <div class="justify-self-start">
+      <nav class="hidden md:flex items-center gap-5 lg:gap-8 text-label-caps uppercase" aria-label="Primary">
+        {mainNav.map((link) => (
+          <a
+            href={link.href}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+            class={`transition-opacity duration-300 ${isActive(link.href) ? 'opacity-100' : 'opacity-50 hover:opacity-100'}`}
+          >
+            {link.label}
+          </a>
+        ))}
+      </nav>
+      <button
+        type="button"
+        data-menu-open
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        class="md:hidden inline-flex items-center gap-2 text-label-caps uppercase"
+      >
+        <Icon name="menu" size={18} />
+        <span>Menu</span>
+      </button>
+    </div>
+
+    <!-- Center: wordmark -->
+    <a
+      href="/"
+      class="justify-self-center font-display text-headline-sm md:text-[26px] lg:text-headline-md tracking-tight whitespace-nowrap hover:opacity-70 transition-opacity"
+    >
+      {site.name.toUpperCase()}
+    </a>
+
+    <!-- Right: actions -->
+    <div class="justify-self-end flex items-center gap-5 md:gap-6">
+      <a href="/objects" aria-label="Search objects" class="hidden md:inline-flex opacity-60 hover:opacity-100 transition-opacity">
+        <Icon name="search" />
+      </a>
+      <a href="/account" aria-label="Account" class="hidden md:inline-flex opacity-60 hover:opacity-100 transition-opacity">
+        <Icon name="account" />
+      </a>
+      <button type="button" data-cart-open aria-label="Open bag" class="relative inline-flex opacity-80 hover:opacity-100 transition-opacity">
+        <Icon name="bag" />
+        <span
+          data-cart-count
+          style="display:none"
+          class="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-[3px] items-center justify-center bg-on-surface text-surface text-[9px] font-semibold leading-none rounded-full"
+        >0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+{!flush && <div class="h-[60px] md:h-[68px]" aria-hidden="true"></div>}

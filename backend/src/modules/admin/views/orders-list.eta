@@ -1,0 +1,28 @@
+<div class="toolbar">
+  <div><h1>Orders</h1><p class="sub"><%= it.orders.length %> orders</p></div>
+</div>
+<form method="get" action="/admin/orders" style="margin-bottom:16px;display:flex;gap:10px;align-items:center">
+  <input name="q" value="<%= it.q %>" placeholder="Search number / email…" style="width:240px" />
+  <select name="status">
+    <option value="">All statuses</option>
+    <% it.statuses.forEach(function (s) { %><option value="<%= s %>" <%= it.status === s ? 'selected' : '' %>><%= s %></option><% }) %>
+  </select>
+  <button class="btn ghost sm" type="submit">Filter</button>
+</form>
+<table>
+  <thead><tr><th>Number</th><th>Date</th><th>Customer</th><th>Status</th><th>Payment</th><th>Total</th><th></th></tr></thead>
+  <tbody>
+    <% if (!it.orders.length) { %><tr><td colspan="7" class="muted">No orders yet.</td></tr><% } %>
+    <% it.orders.forEach(function (o) { %>
+      <tr>
+        <td><a href="/admin/orders/<%= o.id %>"><%= o.orderNumber %></a></td>
+        <td class="muted"><%= new Date(o.createdAt).toLocaleDateString() %></td>
+        <td><%= o.guestEmail %></td>
+        <td><span class="pill"><%= o.status %></span></td>
+        <td class="muted"><%= o.payments[0] ? o.payments[0].provider + ' · ' + o.payments[0].status : '—' %></td>
+        <td>৳<%= o.grandTotal %></td>
+        <td style="text-align:right"><a class="btn ghost sm" href="/admin/orders/<%= o.id %>">View</a></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

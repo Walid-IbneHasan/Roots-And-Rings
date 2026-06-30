@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildCartLookup, lookupToJson } from '../lib/cart-lookup';
+import { getSession, bearer } from '../lib/auth';
+
+const lookupJson = lookupToJson(await buildCartLookup());
+const API = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:4000';
+const session = getSession(Astro);
+let prefill: { name?: string; email?: string; phone?: string; line1?: string; line2?: string; city?: string; district?: string; postalCode?: string } = {};
+if (session) {
+  prefill.name = session.name;
+  prefill.email = session.email;
+  try {
+    const [meRes, addrRes] = await Promise.all([
+      fetch(`${API}/api/account`, { headers: { authorization: `Bearer ${bearer(Astro)}` } }),
+      fetch(`${API}/api/account/addresses`, { headers: { authorization: `Bearer ${bearer(Astro)}` } }),
+    ]);
+    if (meRes.ok) prefill.phone = (await meRes.json()).customer.phone ?? undefined;
+    if (addrRes.ok) {
+      const list = await addrRes.json();
+      const def = list.find((a: any) => a.isDefault) ?? list[0];
+      if (def) prefill = { ...prefill, name: def.name, phone: def.phone, line1: def.line1, line2: def.line2 ?? undefined, city: def.city, district: def.district, postalCode: def.postalCode ?? undefined };
+    }
+  } catch { /* keep basics */ }
+}
+const labelCls = 'text-label-caps uppercase opacity-60 flex flex-col gap-2';
+---
+
+<BaseLayout title="Checkout" noindex={true}>
+  <section class="wrap py-16 md:py-24" data-checkout>
+    <h1 class="font-display text-display-mobile md:text-display-lg mb-12">Checkout</h1>
+
+    <div data-checkout-empty hidden class="py-20 flex flex-col items-center text-center gap-6">
+      <p class="text-body-lg text-on-surface-variant">Your bag is empty.</p>
+      <a href="/objects" class="btn-solid">Browse Objects</a>
+    </div>
+
+    <div data-checkout-content class="grid lg:grid-cols-[1fr_400px] gap-12 lg:gap-20 items-start">
+      <form data-checkout-form class="flex flex-col gap-12" novalidate>
+        <div>
+          <h2 class="font-display text-headline-sm mb-6">Contact</h2>
+          <div class="grid sm:grid-cols-2 gap-6">
+            <label class={labelCls}>Name<input name="name" required autocomplete="name" value={prefill.name ?? ''} class="input-minimal text-body-md" /></label>
+            <label class={labelCls}>Email<input type="email" name="email" required autocomplete="email" value={prefill.email ?? ''} class="input-minimal text-body-md" /></label>
+            <label class={`${labelCls} sm:col-span-2`}>Phone<input name="phone" required autocomplete="tel" value={prefill.phone ?? ''} class="input-minimal text-body-md" /></label>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-display text-headline-sm mb-6">Shipping address</h2>
+          <div class="grid sm:grid-cols-2 gap-6">
+            <label class={`${labelCls} sm:col-span-2`}>Address line 1<input name="line1" required autocomplete="address-line1" value={prefill.line1 ?? ''} class="input-minimal text-body-md" /></label>
+            <label class={`${labelCls} sm:col-span-2`}>Address line 2 (optional)<input name="line2" autocomplete="address-line2" value={prefill.line2 ?? ''} class="input-minimal text-body-md" /></label>
+            <label class={labelCls}>City<input name="city" required value={prefill.city ?? ''} class="input-minimal text-body-md" /></label>
+            <label class={labelCls}>District<input name="district" required value={prefill.district ?? ''} class="input-minimal text-body-md" /></label>
+            <label class={labelCls}>Postal code<input name="postalCode" value={prefill.postalCode ?? ''} class="input-minimal text-body-md" /></label>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-display text-headline-sm mb-6">Payment</h2>
+          <div class="flex flex-col gap-4">
+            <label class="flex items-center gap-3 text-body-md cursor-pointer">
+              <input type="radio" name="paymentMethod" value="COD" checked /> Cash on Delivery
+            </label>
+            <label class="flex items-center gap-3 text-body-md cursor-pointer">
+              <input type="radio" name="paymentMethod" value="BKASH" /> bKash
+            </label>
+          </div>
+        </div>
+
+        <p data-checkout-error hidden class="text-caption text-error border border-error px-4 py-3"></p>
+        <button type="submit" data-checkout-submit class="btn-solid w-full">Place Order</button>
+      </form>
+
+      <aside class="lg:sticky lg:top-24 bg-surface-container-low p-8">
+        <h2 class="font-display text-headline-sm mb-4">Your order</h2>
+        <div data-checkout-summary></div>
+        <div class="flex justify-between mt-6 pt-5 hairline-t text-body-lg font-display">
+          <span>Total</span><span data-checkout-total>৳0</span>
+        </div>
+        <p class="text-caption text-on-surface-variant mt-3">Shipping &amp; taxes calculated at fulfilment.</p>
+      </aside>
+    </div>
+
+    <script type="application/json" data-checkout-lookup set:html={lookupJson}></script>
+  </section>
+</BaseLayout>
+
+<script>
+  import '../lib/checkout.ts';
+</script>

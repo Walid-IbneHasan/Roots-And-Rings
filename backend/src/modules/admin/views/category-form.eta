@@ -1,0 +1,35 @@
+<h1><%= it.cat ? 'Edit' : 'New' %> Category</h1>
+<form class="stack" method="post" action="<%= it.cat ? '/admin/categories/' + it.cat.id + '/edit' : '/admin/categories/new' %>">
+  <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+  <label>Kind
+    <select name="kind">
+      <option value="PRODUCT_TYPE" <%= it.cat && it.cat.kind === 'PRODUCT_TYPE' ? 'selected' : '' %>>Product Type</option>
+      <option value="COLLECTION" <%= it.cat && it.cat.kind === 'COLLECTION' ? 'selected' : '' %>>Collection</option>
+    </select>
+  </label>
+  <label>Name <input name="name" required value="<%= it.cat ? it.cat.name : '' %>" /></label>
+  <label>Slug (optional) <input name="slug" value="<%= it.cat ? it.cat.slug : '' %>" placeholder="auto from name" /></label>
+  <label>Parent
+    <select name="parentId">
+      <option value="">— none —</option>
+      <% it.parents.forEach(function (p) { if (!it.cat || p.id !== it.cat.id) { %>
+        <option value="<%= p.id %>" <%= it.cat && it.cat.parentId === p.id ? 'selected' : '' %>><%= p.name %></option>
+      <% } }) %>
+    </select>
+  </label>
+  <label>Tagline <input name="tagline" value="<%= it.cat && it.cat.tagline ? it.cat.tagline : '' %>" /></label>
+  <label>Description <textarea name="description"><%= it.cat && it.cat.description ? it.cat.description : '' %></textarea></label>
+  <label>Image URL <input name="imageUrl" value="<%= it.cat && it.cat.imageUrl ? it.cat.imageUrl : '' %>" placeholder="/uploads/categories/..." /></label>
+  <div class="grid2">
+    <label>Sort order <input type="number" name="sortOrder" value="<%= it.cat ? it.cat.sortOrder : 0 %>" /></label>
+    <label>Status
+      <select name="isActive">
+        <option value="on" <%= !it.cat || it.cat.isActive ? 'selected' : '' %>>Active</option>
+        <option value="" <%= it.cat && !it.cat.isActive ? 'selected' : '' %>>Hidden</option>
+      </select>
+    </label>
+  </div>
+  <label>SEO Title <input name="seoTitle" value="<%= it.cat && it.cat.seoTitle ? it.cat.seoTitle : '' %>" /></label>
+  <label>SEO Description <textarea name="seoDescription"><%= it.cat && it.cat.seoDescription ? it.cat.seoDescription : '' %></textarea></label>
+  <div class="actions"><button class="btn" type="submit">Save</button><a class="btn ghost" href="/admin/categories">Cancel</a></div>
+</form>

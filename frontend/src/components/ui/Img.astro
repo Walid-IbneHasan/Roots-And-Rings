@@ -1,0 +1,79 @@
+---
+import { Image } from 'astro:assets';
+import { resolveImage } from '../../lib/images';
+
+/**
+ * Optimised image with a graceful tonal-placeholder fallback.
+ * - Resolves a filename stem to an imported asset and renders an `astro:assets`
+ *   <Image> (AVIF/WebP, responsive srcset, explicit dimensions → no CLS).
+ * - If the asset isn't present yet, renders an earth-tone placeholder at the
+ *   correct aspect ratio so layout is final before photography is added.
+ */
+interface Props {
+  src: string;
+  alt: string;
+  aspect?: string; // CSS aspect-ratio, e.g. "4/5"
+  fill?: boolean; // ignore aspect; fill the (positioned) parent
+  class?: string;
+  imgClass?: string;
+  widths?: number[];
+  sizes?: string;
+  priority?: boolean;
+}
+const {
+  src,
+  alt,
+  aspect = '4/5',
+  fill = false,
+  class: wrapClass = '',
+  imgClass = '',
+  widths = [400, 600, 900, 1200],
+  sizes = '(max-width: 768px) 100vw, 33vw',
+  priority = false,
+} = Astro.props;
+
+const wrapStyle = fill ? undefined : `aspect-ratio:${aspect}`;
+const wrapBase = fill ? 'absolute inset-0 w-full h-full overflow-hidden bg-surface-container' : 'relative overflow-hidden bg-surface-container';
+
+// Remote URLs (product/collection images served by the backend, already optimised WebP).
+const isRemote = /^https?:\/\//i.test(src);
+const meta = isRemote ? null : resolveImage(src);
+
+// Deterministic earth-tone placeholder so the fallback feels intentional, not broken.
+const tones = ['#e7e2da', '#ded9d2', '#ece8e0', '#d0c4be', '#e9e1dd', '#cfc6bd'];
+let hash = 0;
+for (let i = 0; i < src.length; i++) hash = (hash * 31 + src.charCodeAt(i)) >>> 0;
+const tone = tones[hash % tones.length];
+---
+
+<div class={`${wrapBase} ${wrapClass}`} style={wrapStyle}>
+  {isRemote ? (
+    <img
+      src={src}
+      alt={alt}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : 'auto'}
+      decoding="async"
+      class={`w-full h-full object-cover ${imgClass}`}
+    />
+  ) : meta ? (
+    <Image
+      src={meta}
+      alt={alt}
+      widths={widths}
+      sizes={sizes}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : 'auto'}
+      decoding="async"
+      class={`w-full h-full object-cover ${imgClass}`}
+    />
+  ) : (
+    <div
+      class="w-full h-full"
+      style={`background-image:linear-gradient(135deg, ${tone} 0%, #f4efe7 100%)`}
+      role="img"
+      aria-label={alt}
+    >
+    </div>
+  )}
+</div>

@@ -1,0 +1,44 @@
+---
+interface Props {
+  heading?: string;
+  class?: string;
+}
+const {
+  heading = 'Subscribe to our dispatch for early access to new firings.',
+  class: className = '',
+} = Astro.props;
+---
+
+<form data-newsletter class={`flex flex-col gap-5 ${className}`} novalidate>
+  {heading && <p class="text-caption text-on-surface-variant max-w-xs">{heading}</p>}
+  <div class="flex items-end gap-4">
+    <input
+      type="email"
+      name="email"
+      required
+      placeholder="Email address"
+      aria-label="Email address"
+      class="input-minimal flex-1 text-body-md"
+    />
+    <button type="submit" class="btn-editorial text-label-caps uppercase shrink-0">Submit</button>
+  </div>
+  <p data-newsletter-success hidden class="text-caption text-on-surface-variant">
+    Thank you — you’re on the list.
+  </p>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form[data-newsletter]').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = form.querySelector<HTMLInputElement>('input[type="email"]');
+      if (input && !input.checkValidity()) {
+        input.reportValidity();
+        return;
+      }
+      const success = form.querySelector<HTMLElement>('[data-newsletter-success]');
+      if (success) success.hidden = false;
+      form.reset();
+    });
+  });
+</script>

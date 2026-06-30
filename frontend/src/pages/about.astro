@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Img from '../components/ui/Img.astro';
+import { site } from '../data/site';
+
+const details = [
+  {
+    heading: 'Care Guide',
+    body: 'Hand-wash with warm water and a soft cloth. Avoid sudden temperature changes. Unglazed surfaces may darken gently with use — this patina is part of the work.',
+  },
+  {
+    heading: 'Shipping & Returns',
+    body: 'Each piece is wrapped and packed by hand and shipped insured. Made-to-order works ship within 3–5 weeks. Returns accepted within 14 days on in-stock pieces.',
+  },
+  {
+    heading: 'Contact',
+    body: 'For commissions, concierge advice, or press, write to us and we will reply personally.',
+  },
+];
+---
+
+<BaseLayout title="About" description="The story, materials, and making behind Roots & Rings ceramics.">
+  <section class="wrap pt-16 md:pt-24 pb-16 fade-up">
+    <span class="text-label-caps uppercase opacity-60 mb-6 block">About</span>
+    <h1 class="font-display text-display-mobile md:text-display-lg italic max-w-3xl leading-[1.1]">
+      Crafted with love, rooted in tradition.
+    </h1>
+  </section>
+
+  <section class="relative mb-section-gap">
+    <div class="relative h-[50vh] min-h-[340px] overflow-hidden">
+      <Img fill src="about-hero" alt="Hands shaping wet clay on a potter's wheel in a quiet studio." widths={[768, 1280, 1920]} sizes="100vw" />
+    </div>
+  </section>
+
+  <section class="wrap pb-section-gap grid md:grid-cols-12 gap-10 md:gap-gutter">
+    <div class="md:col-span-5">
+      <h2 class="font-display text-headline-md">Made slowly, by one pair of hands.</h2>
+    </div>
+    <div class="md:col-start-7 md:col-span-6 flex flex-col gap-6 text-body-lg text-on-surface-variant leading-relaxed max-w-prose">
+      <p>
+        Roots &amp; Rings is a small studio making collectible ceramics and home objects in limited editions.
+        Every vessel is formed, trimmed, glazed, and fired by hand — no two are ever quite alike.
+      </p>
+      <p>
+        We work with stoneware, porcelain, and earthenware, letting the material and the kiln have the final word.
+        The marks of making are left visible: the throwing ring, the ash flash, the seam where the coil closed.
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap pb-section-gap">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-gutter hairline-t pt-12">
+      {details.map((d) => (
+        <div>
+          <h3 class="font-display text-headline-sm mb-4">{d.heading}</h3>
+          <p class="text-body-md text-on-surface-variant leading-relaxed">{d.body}</p>
+          {d.heading === 'Contact' && (
+            <a href={`mailto:hello@rootsandrings.example`} class="btn-editorial text-label-caps uppercase mt-5 inline-block">
+              Write to us
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

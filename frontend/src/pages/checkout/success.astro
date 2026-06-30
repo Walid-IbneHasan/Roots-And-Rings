@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatPrice } from '../../lib/format';
+
+const orderNumber = Astro.url.searchParams.get('order');
+const token = Astro.url.searchParams.get('token');
+const API = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:4000';
+
+interface OrderView {
+  orderNumber: string;
+  status: string;
+  email: string;
+  totals: { grand: number };
+  items: { name: string; quantity: number; lineTotal: number }[];
+  payment: { provider: string; status: string } | null;
+}
+
+let order: OrderView | null = null;
+if (orderNumber && token) {
+  try {
+    const res = await fetch(`${API}/api/orders/${encodeURIComponent(orderNumber)}?token=${encodeURIComponent(token)}`);
+    if (res.ok) order = (await res.json()) as OrderView;
+  } catch {
+    order = null;
+  }
+}
+---
+
+<BaseLayout title="Order Confirmed" noindex={true} footerVariant="minimal">
+  <section class="wrap py-section-gap">
+    {order ? (
+      <div class="max-w-2xl mx-auto text-center fade-up is-visible">
+        <span class="text-label-caps uppercase text-secondary mb-5 block">Order Confirmed</span>
+        <h1 class="font-display text-display-mobile md:text-display-lg italic mb-5">Thank you.</h1>
+        <p class="text-body-lg text-on-surface-variant mb-2">
+          Your order <strong>{order.orderNumber}</strong> has been placed.
+        </p>
+        <p class="text-body-md text-on-surface-variant mb-12">
+          A confirmation is on its way to {order.email}.
+          {order.payment?.provider === 'COD' ? ' Please have cash ready when your pieces arrive.' : ''}
+        </p>
+
+        <div class="bg-surface-container-low p-8 text-left">
+          {order.items.map((i) => (
+            <div class="flex justify-between py-3 hairline-b">
+              <span class="text-body-md">{i.name} <span class="opacity-50">× {i.quantity}</span></span>
+              <span class="text-body-md">{formatPrice(i.lineTotal)}</span>
+            </div>
+          ))}
+          <div class="flex justify-between pt-5 font-display text-body-lg">
+            <span>Total</span><span>{formatPrice(order.totals.grand)}</span>
+          </div>
+        </div>
+
+        <a href="/objects" class="btn-editorial text-label-caps uppercase mt-12 inline-block">Continue Shopping</a>
+      </div>
+    ) : (
+      <div class="max-w-xl mx-auto text-center fade-up is-visible">
+        <h1 class="font-display text-display-mobile italic mb-6">We couldn’t find that order.</h1>
+        <p class="text-body-lg text-on-surface-variant mb-10">The confirmation link may be incomplete or expired.</p>
+        <a href="/objects" class="btn-solid">Back to Shop</a>
+      </div>
+    )}
+  </section>
+</BaseLayout>

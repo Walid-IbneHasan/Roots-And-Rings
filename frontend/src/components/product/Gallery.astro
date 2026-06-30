@@ -1,0 +1,26 @@
+---
+import Img from '../ui/Img.astro';
+import type { ImageRef } from '../../lib/schema';
+
+interface Props {
+  images: ImageRef[];
+}
+const { images } = Astro.props;
+
+// Vary aspect ratios for an editorial, art-book rhythm.
+const aspects = ['4/5', '3/2', '4/3', '1/1'];
+---
+
+<div class="flex flex-col gap-gutter">
+  {images.map((image, i) => (
+    <Img
+      src={image.src}
+      alt={image.alt}
+      aspect={aspects[i % aspects.length]}
+      widths={[500, 800, 1100]}
+      sizes="(max-width: 768px) 100vw, 50vw"
+      imgClass="saturate-[0.82]"
+      priority={i === 0}
+    />
+  ))}
+</div>
