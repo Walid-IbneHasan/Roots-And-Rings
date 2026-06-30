@@ -10,7 +10,8 @@ interface OrderView {
   orderNumber: string;
   status: string;
   email: string;
-  totals: { grand: number };
+  totals: { grand: number; discount?: number };
+  couponCode?: string | null;
   items: { name: string; quantity: number; lineTotal: number }[];
   payment: { provider: string; status: string } | null;
 }
@@ -47,6 +48,12 @@ if (orderNumber && token) {
               <span class="text-body-md">{formatPrice(i.lineTotal)}</span>
             </div>
           ))}
+          {order.totals.discount && order.totals.discount > 0 && (
+            <div class="flex justify-between py-3 hairline-b text-secondary">
+              <span>Discount {order.couponCode ? `(${order.couponCode})` : ''}</span>
+              <span>−{formatPrice(order.totals.discount)}</span>
+            </div>
+          )}
           <div class="flex justify-between pt-5 font-display text-body-lg">
             <span>Total</span><span>{formatPrice(order.totals.grand)}</span>
           </div>

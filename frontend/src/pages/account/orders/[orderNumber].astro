@@ -29,6 +29,12 @@ try {
                 <span class="text-body-md">{formatPrice(i.lineTotal)}</span>
               </div>
             ))}
+            {order.totals.discount > 0 && (
+              <div class="flex justify-between py-3 hairline-b text-secondary">
+                <span class="text-body-md">Discount {order.couponCode ? `(${order.couponCode})` : ''}</span>
+                <span class="text-body-md">−{formatPrice(order.totals.discount)}</span>
+              </div>
+            )}
             <div class="flex justify-between pt-5 font-display text-body-lg"><span>Total</span><span>{formatPrice(order.totals.grand)}</span></div>
           </div>
           {order.payment && <p class="text-caption text-on-surface-variant mt-4">Payment: {order.payment.provider} · {order.payment.status}</p>}
