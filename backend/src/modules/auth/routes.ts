@@ -21,7 +21,7 @@ export default async function authRoutes(app: FastifyInstance) {
       data: { name, email: lower, passwordHash: await hashPassword(password) },
     });
     const code = await issueOtp(app.prisma, customer.id, 'EMAIL_VERIFY');
-    sendOtpEmail(customer.email, 'EMAIL_VERIFY', code);
+    await sendOtpEmail(customer.email, 'EMAIL_VERIFY', code);
     return reply.status(201).send({ token: signCustomerToken(customer), customer: customerDto(customer) });
   });
 
@@ -52,7 +52,7 @@ export default async function authRoutes(app: FastifyInstance) {
     const customer = await app.prisma.customer.findUnique({ where: { email: email.toLowerCase() } });
     if (customer && customer.isActive) {
       const code = await issueOtp(app.prisma, customer.id, 'PASSWORD_RESET');
-      sendOtpEmail(customer.email, 'PASSWORD_RESET', code);
+      await sendOtpEmail(customer.email, 'PASSWORD_RESET', code);
     }
     return { ok: true }; // enumeration-safe: always 200
   });

@@ -1,6 +1,7 @@
 import nodemailer, { type Transporter } from 'nodemailer';
 import type { OtpType } from '@prisma/client';
 import { env } from '../../env';
+import { renderOtpEmail } from './templates';
 
 export interface MailMessage {
   to: string;
@@ -40,12 +41,11 @@ export async function sendMail(msg: MailMessage): Promise<void> {
   sentMessages.push(msg);
 }
 
-// --- OTP email (rewritten to use templates + sendMail in Task 3) ---
-const PURPOSE: Record<OtpType, string> = {
-  EMAIL_VERIFY: 'verify your email',
-  PASSWORD_RESET: 'reset your password',
-  PASSWORD_CHANGE: 'confirm your password change',
-};
-export function sendOtpEmail(email: string, type: OtpType, code: string): void {
-  console.log(`[email] OTP for ${email} to ${PURPOSE[type]}: ${code} (no-op until SMTP configured)`);
+export async function sendOtpEmail(email: string, type: OtpType, code: string): Promise<void> {
+  const { subject, html, text } = renderOtpEmail(type, code);
+  try {
+    await sendMail({ to: email, subject, html, text });
+  } catch (e) {
+    console.error('[email] OTP send failed', e);
+  }
 }

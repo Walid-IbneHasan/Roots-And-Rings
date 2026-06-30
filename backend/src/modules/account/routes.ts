@@ -79,7 +79,7 @@ export default async function accountRoutes(app: FastifyInstance) {
 
   app.post('/api/account/password/request-code', { preHandler: requireCustomer }, async (request) => {
     const code = await issueOtp(app.prisma, request.customer!.id, 'PASSWORD_CHANGE');
-    sendOtpEmail(request.customer!.email, 'PASSWORD_CHANGE', code);
+    await sendOtpEmail(request.customer!.email, 'PASSWORD_CHANGE', code);
     return { ok: true };
   });
 
