@@ -622,10 +622,13 @@ describe('POST /api/coupons/validate', () => {
     expect(res.json().valid).toBe(false);
     expect(res.json().message).toBeTruthy();
   });
-  it('returns valid:false when below the minimum order', async () => {
+  it('applies a fixed discount once the minimum order is met', async () => {
     const res = await post({ code: 'WELCOME100', items: [{ slug: 'coup-zz', qty: 1 }] });
-    // subtotal 1000 ≥ 500 → actually valid; use a cheaper product check instead:
-    expect(res.json().valid).toBe(true);
+    expect(res.statusCode).toBe(200);
+    const b = res.json();
+    expect(b.valid).toBe(true);
+    expect(b.discount).toBe(100);
+    expect(b.newTotal).toBe(900);
   });
 });
 ```
@@ -1432,4 +1435,4 @@ git commit -m "docs(coupons): Phase 4 README + verification"
 
 **3. Type consistency:** `priceItems` returns `{ lines, subtotal }` and is consumed identically by Tasks 5 & 6; `validateCoupon`/`redeemCoupon` signatures match between definition (Tasks 2/3) and callers (Tasks 5/6); `computeDiscount` takes `{type, value}` consistently; `CouponError.statusCode = 400` surfaces via the existing error plugin (validate route catches it → 200; checkout lets it propagate → 400). The coupon `value` is `Decimal` → `Number(value)` at every read. ✅
 
-*Note (Task 5 test):* the third test asserts `WELCOME100` is valid at subtotal 1000 (≥ its ৳500 min), so it exercises the min-order field without a below-min case; the below-min path is covered by the unit test in Task 2 (`MIN500ZZ`).
+*Note (Task 5 test):* the third test exercises the min-order-met path (valid at subtotal 1000 ≥ ৳500); the below-min rejection path is covered by the unit test in Task 2 (`MIN500ZZ`).
