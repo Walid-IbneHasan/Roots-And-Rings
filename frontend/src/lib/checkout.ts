@@ -28,6 +28,13 @@ function init(): void {
   const contentEl = root.querySelector<HTMLElement>('[data-checkout-content]');
   const errorEl = root.querySelector<HTMLElement>('[data-checkout-error]');
   const submitBtn = root.querySelector<HTMLButtonElement>('[data-checkout-submit]');
+  const couponInput = root.querySelector<HTMLInputElement>('[data-coupon-input]');
+  const couponApply = root.querySelector<HTMLButtonElement>('[data-coupon-apply]');
+  const couponMsg = root.querySelector<HTMLElement>('[data-coupon-msg]');
+  const couponRow = root.querySelector<HTMLElement>('[data-coupon-row]');
+  const couponCodeEl = root.querySelector<HTMLElement>('[data-coupon-code]');
+  const couponAmountEl = root.querySelector<HTMLElement>('[data-coupon-amount]');
+  let appliedCoupon: { code: string; discount: number } | null = null;
 
   function renderSummary(): void {
     const items = $cart.get().items;
@@ -52,7 +59,11 @@ function init(): void {
         })
         .join('');
     }
-    if (totalEl) totalEl.textContent = formatPrice(subtotal);
+    const discount = appliedCoupon ? Math.min(appliedCoupon.discount, subtotal) : 0;
+    if (couponRow) couponRow.hidden = !appliedCoupon;
+    if (appliedCoupon && couponCodeEl) couponCodeEl.textContent = appliedCoupon.code;
+    if (appliedCoupon && couponAmountEl) couponAmountEl.textContent = `−${formatPrice(discount)}`;
+    if (totalEl) totalEl.textContent = formatPrice(Math.max(subtotal - discount, 0));
   }
 
   function idemKey(): string {
@@ -86,6 +97,7 @@ function init(): void {
       },
       paymentMethod: fd.get('paymentMethod') || 'COD',
       idempotencyKey: idemKey(),
+      ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
     };
 
     if (submitBtn) {
@@ -123,6 +135,43 @@ function init(): void {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Place Order';
       }
+    }
+  });
+
+  couponApply?.addEventListener('click', async () => {
+    const code = couponInput?.value.trim();
+    if (!code) return;
+    const items = $cart.get().items.map((i) => ({ slug: i.slug, qty: i.qty }));
+    if (!items.length) return;
+    if (couponMsg) couponMsg.hidden = true;
+    couponApply.disabled = true;
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ code, items }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        appliedCoupon = { code: data.code, discount: data.discount };
+        if (couponMsg) {
+          couponMsg.textContent = 'Code applied.';
+          couponMsg.className = 'text-caption text-secondary';
+          couponMsg.hidden = false;
+        }
+      } else {
+        appliedCoupon = null;
+        if (couponMsg) {
+          couponMsg.textContent = data.message ?? 'This code isn’t valid.';
+          couponMsg.className = 'text-caption text-error';
+          couponMsg.hidden = false;
+        }
+      }
+      renderSummary();
+    } catch {
+      if (couponMsg) { couponMsg.textContent = 'Could not check that code.'; couponMsg.className = 'text-caption text-error'; couponMsg.hidden = false; }
+    } finally {
+      couponApply.disabled = false;
     }
   });
 

@@ -76,6 +76,18 @@ const labelCls = 'text-label-caps uppercase opacity-60 flex flex-col gap-2';
       <aside class="lg:sticky lg:top-24 bg-surface-container-low p-8">
         <h2 class="font-display text-headline-sm mb-4">Your order</h2>
         <div data-checkout-summary></div>
+        <div class="mt-5 flex flex-col gap-2">
+          <label class="text-label-caps uppercase opacity-60">Discount code</label>
+          <div class="flex gap-2">
+            <input data-coupon-input class="input-minimal text-body-md flex-1" placeholder="Enter code" />
+            <button type="button" data-coupon-apply class="btn-editorial text-label-caps uppercase">Apply</button>
+          </div>
+          <p data-coupon-msg hidden class="text-caption"></p>
+        </div>
+        <div data-coupon-row hidden class="flex justify-between mt-4 text-body-md text-secondary">
+          <span>Discount <span data-coupon-code></span></span>
+          <span data-coupon-amount>−৳0</span>
+        </div>
         <div class="flex justify-between mt-6 pt-5 hairline-t text-body-lg font-display">
           <span>Total</span><span data-checkout-total>৳0</span>
         </div>
