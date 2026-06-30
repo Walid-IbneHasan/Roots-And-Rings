@@ -1,0 +1,28 @@
+<% var c = it.coupon; %>
+<h1><%= c ? 'Edit ' + c.code : 'New coupon' %></h1>
+<p class="sub">Percent (0–100) or a fixed ৳ amount off the order subtotal.</p>
+<form class="stack" method="post" action="<%= c ? '/admin/coupons/' + c.id : '/admin/coupons' %>">
+  <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+  <div class="grid2">
+    <label>Code<input name="code" value="<%= c ? c.code : '' %>" required /></label>
+    <label>Type
+      <select name="type">
+        <option value="PERCENT" <%= c && c.type === 'PERCENT' ? 'selected' : '' %>>Percent (%)</option>
+        <option value="FIXED" <%= c && c.type === 'FIXED' ? 'selected' : '' %>>Fixed (৳)</option>
+      </select>
+    </label>
+  </div>
+  <div class="grid2">
+    <label>Value<input name="value" type="number" step="0.01" min="0" value="<%= c ? Number(c.value) : '' %>" required /></label>
+    <label>Min order subtotal (৳)<input name="minOrderSubtotal" type="number" step="0.01" min="0" value="<%= c ? Number(c.minOrderSubtotal) : '' %>" /></label>
+  </div>
+  <div class="grid2">
+    <label>Max redemptions (blank = unlimited)<input name="maxRedemptions" type="number" min="1" value="<%= c && c.maxRedemptions != null ? c.maxRedemptions : '' %>" /></label>
+    <label>Per-customer limit (blank = unlimited)<input name="perCustomerLimit" type="number" min="1" value="<%= c && c.perCustomerLimit != null ? c.perCustomerLimit : '' %>" /></label>
+  </div>
+  <label>Description<input name="description" value="<%= c && c.description ? c.description : '' %>" /></label>
+  <div class="actions">
+    <button class="btn" type="submit"><%= c ? 'Save changes' : 'Create coupon' %></button>
+    <a class="btn ghost" href="/admin/coupons">Cancel</a>
+  </div>
+</form>

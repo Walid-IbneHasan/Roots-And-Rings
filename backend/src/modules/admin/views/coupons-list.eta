@@ -1,0 +1,28 @@
+<div class="toolbar">
+  <div><h1>Coupons</h1><p class="sub">Discount codes applied at checkout.</p></div>
+  <a class="btn" href="/admin/coupons/new">New coupon</a>
+</div>
+<table>
+  <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Min order</th><th>Used</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+    <% it.coupons.forEach(function(c){ %>
+    <tr>
+      <td><strong><%= c.code %></strong><% if (c.description) { %><br><span class="muted"><%= c.description %></span><% } %></td>
+      <td><%= c.type %></td>
+      <td><%= c.type === 'PERCENT' ? Number(c.value) + '%' : '৳' + Number(c.value) %></td>
+      <td><%= Number(c.minOrderSubtotal) > 0 ? '৳' + Number(c.minOrderSubtotal) : '—' %></td>
+      <td><%= c.timesRedeemed %><%= c.maxRedemptions != null ? ' / ' + c.maxRedemptions : '' %></td>
+      <td><span class="pill" style="<%= c.isActive ? '' : 'background:#eee;color:#999' %>"><%= c.isActive ? 'Active' : 'Inactive' %></span></td>
+      <td>
+        <a class="btn ghost sm" href="/admin/coupons/<%= c.id %>/edit">Edit</a>
+        <% if (c.isActive) { %>
+        <form method="post" action="/admin/coupons/<%= c.id %>/deactivate" style="display:inline">
+          <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+          <button class="btn danger sm" type="submit">Deactivate</button>
+        </form>
+        <% } %>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
