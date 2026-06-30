@@ -5,7 +5,7 @@ export const site = {
   description:
     'Collectible ceramics and home objects shaped by earth, fire, hand, and time. Small-batch artisan pottery, made in limited editions.',
   tagline: 'Crafted with love, rooted in tradition.',
-  url: 'https://rootsandrings.example',
+  url: import.meta.env.PUBLIC_SITE_URL ?? 'https://rootsandrings.net',
   locale: 'en',
   ogImage: '/og-image.jpg',
   social: {
