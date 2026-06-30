@@ -2,11 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Img from '../components/ui/Img.astro';
 import { getCollections } from '../lib/catalog';
+import JsonLd from '../components/seo/JsonLd.astro';
+import { breadcrumbSchema } from '../lib/structured-data';
 
 const collections = await getCollections();
 ---
 
 <BaseLayout title="Collections" description="Curated collections of small-batch ceramics from the Roots & Rings atelier.">
+  <JsonLd slot="head" schema={breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Collections', url: '/collections' }])} />
   <section class="wrap pt-16 md:pt-24 pb-12 text-center fade-up">
     <span class="text-label-caps uppercase opacity-60 mb-6 block">Collections</span>
     <h1 class="font-display text-display-mobile md:text-display-lg">Bodies of work, gathered by hand.</h1>

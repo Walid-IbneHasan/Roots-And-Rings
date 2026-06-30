@@ -7,12 +7,16 @@ import LoadMore from '../../components/catalog/LoadMore.astro';
 import ProductCard from '../../components/product/ProductCard.astro';
 import Icon from '../../components/ui/Icon.astro';
 import { getProducts, getFacets } from '../../lib/catalog';
+import JsonLd from '../../components/seo/JsonLd.astro';
+import { itemListSchema, breadcrumbSchema } from '../../lib/structured-data';
 
 const products = await getProducts({ sort: 'newest' });
 const facets = await getFacets();
 ---
 
 <BaseLayout title="Objects" description="Small-batch ceramic works for quiet interiors.">
+  <JsonLd slot="head" schema={breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Objects', url: '/objects' }])} />
+  <JsonLd slot="head" schema={itemListSchema(products.map((p) => ({ name: p.name, url: `/objects/${p.slug}` })))} />
   <!-- Hero band -->
   <section class="relative h-[42vh] min-h-[300px] flex items-center justify-center overflow-hidden">
     <Img
