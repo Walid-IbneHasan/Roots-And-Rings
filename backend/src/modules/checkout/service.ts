@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import type { PrismaClient, OrderStatus } from '@prisma/client';
-import { resolvePrice } from '../../lib/pricing';
 import { computeTotals, round2 } from '../../lib/money';
+import { priceItems } from './pricing';
 import { generateOrderNumber } from '../../lib/order-number';
 import { httpError } from '../../lib/errors';
 import { reserveForOrder, commitReservations, checkLowStock } from '../inventory/service';
@@ -9,8 +9,6 @@ import { getProvider } from '../payments/service';
 import { enqueueJob, runJobInline } from '../notifications/jobs';
 import type { CheckoutInput } from './schemas';
 
-const num = (d: { toString(): string } | number | null | undefined): number | null =>
-  d == null ? null : Number(d);
 const rc = { isolationLevel: 'ReadCommitted' as const };
 
 export interface PlaceOrderResult {
@@ -34,41 +32,11 @@ export async function placeOrder(prisma: PrismaClient, input: CheckoutInput, cus
   }
 
   // Resolve + re-price server-side (never trust client prices).
-  const resolved = [] as { productId: string; variantId: string; productName: string; variantName: string; sku: string; unitPrice: number; qty: number }[];
-  for (const it of input.items) {
-    const product = await prisma.product.findFirst({
-      where: { slug: it.slug, isActive: true },
-      include: { variants: { where: { isActive: true }, orderBy: { position: 'asc' } } },
-    });
-    if (!product) throw httpError(400, `Unknown or unavailable product: ${it.slug}`);
-    const variant = product.variants[0];
-    if (!variant) throw httpError(400, `No purchasable variant for ${product.name}`);
-    if (it.qty < product.minPerOrder) throw httpError(400, `Minimum ${product.minPerOrder} for ${product.name}`);
-    if (product.maxPerOrder && it.qty > product.maxPerOrder) throw httpError(400, `Maximum ${product.maxPerOrder} for ${product.name}`);
-
-    const priced = resolvePrice(
-      {
-        basePrice: num(product.basePrice)!,
-        salePrice: num(product.salePrice),
-        flashPrice: num(product.flashPrice),
-        flashStartAt: product.flashStartAt,
-        flashEndAt: product.flashEndAt,
-        currency: product.currency,
-      },
-      new Date(),
-    );
-    resolved.push({
-      productId: product.id,
-      variantId: variant.id,
-      productName: product.name,
-      variantName: variant.name,
-      sku: variant.sku,
-      unitPrice: priced.price,
-      qty: it.qty,
-    });
-  }
-
-  const totals = computeTotals(resolved.map((r) => ({ unitPrice: r.unitPrice, quantity: r.qty })), 0);
+  const { lines: resolved, subtotal } = await priceItems(prisma, input.items);
+  const totals = computeTotals(
+    resolved.map((r) => ({ unitPrice: r.unitPrice, quantity: r.qty })),
+    0,
+  );
   const orderNumber = generateOrderNumber();
   const orderToken = randomBytes(16).toString('hex');
   const tranId = `${orderNumber}-${randomBytes(3).toString('hex')}`;
