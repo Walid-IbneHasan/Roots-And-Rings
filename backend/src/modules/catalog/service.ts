@@ -2,7 +2,7 @@ import type { PrismaClient, Prisma } from '@prisma/client';
 import { mapProduct, mapCollection, type ProductDTO, type CollectionDTO } from '../../lib/mappers';
 import type { ProductsQuery } from './schemas';
 
-const include = { category: true, images: true, collections: true } satisfies Prisma.ProductInclude;
+const include = { category: true, images: true, collections: true, variants: true } satisfies Prisma.ProductInclude;
 
 const PRODUCT_TYPE_ORDER = ['Vessels', 'Bowls', 'Plates', 'Sculptural', 'Tableware'];
 const CLAY_BODY_ORDER = ['Stoneware', 'Porcelain', 'Earthenware'];

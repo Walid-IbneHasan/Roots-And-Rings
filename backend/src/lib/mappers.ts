@@ -7,6 +7,18 @@ function num(d: Prisma.Decimal | number | null | undefined): number | null {
   return typeof d === 'number' ? d : Number(d);
 }
 
+export type Availability = 'in_stock' | 'out_of_stock' | 'backorder';
+
+/** Product-level availability from active-variant stock + backorder policy. */
+export function computeAvailability(
+  variants: { isActive: boolean; stock: number }[],
+  allowBackorder: boolean,
+): Availability {
+  const inStock = variants.some((v) => v.isActive && v.stock > 0);
+  if (inStock) return 'in_stock';
+  return allowBackorder ? 'backorder' : 'out_of_stock';
+}
+
 /** Prefix root-relative upload paths with APP_URL so a cross-origin storefront can load them. */
 export function absUrl(u: string | null | undefined): string | null {
   if (!u) return null;
@@ -53,6 +65,7 @@ export interface ProductDTO {
   publishedAt: string | null;
   ratingAvg: number | null;
   ratingCount: number;
+  availability: Availability;
 }
 export interface CollectionDTO {
   slug: string;
@@ -63,7 +76,7 @@ export interface CollectionDTO {
 }
 
 type ProductWithRelations = Prisma.ProductGetPayload<{
-  include: { category: true; images: true; collections: true };
+  include: { category: true; images: true; collections: true; variants: true };
 }>;
 
 export function mapProduct(p: ProductWithRelations, now: Date = new Date()): ProductDTO {
@@ -117,6 +130,7 @@ export function mapProduct(p: ProductWithRelations, now: Date = new Date()): Pro
     publishedAt: p.publishedAt ? p.publishedAt.toISOString() : null,
     ratingAvg: num(p.ratingAvg),
     ratingCount: p.ratingCount,
+    availability: computeAvailability(p.variants, p.allowBackorder),
   };
 }
 
