@@ -3,6 +3,7 @@ import { round2 } from '../../lib/money';
 import { CouponError } from './errors';
 
 type Db = PrismaClient | Prisma.TransactionClient;
+type Tx = Prisma.TransactionClient;
 
 export function normalizeCode(code: string): string {
   return code.trim().toUpperCase();
@@ -45,4 +46,40 @@ export async function validateCoupon(db: Db, code: string, ctx: CouponContext): 
     }
   }
   return { coupon, discount: computeDiscount(coupon, ctx.subtotal) };
+}
+
+/**
+ * Redeem a coupon inside the checkout transaction. Row-locks the coupon (SELECT … FOR UPDATE)
+ * so concurrent redemptions serialize and cannot exceed maxRedemptions, re-validates against the
+ * locked state, increments the counter, and records the redemption. Throws CouponError if invalid.
+ */
+export async function redeemCoupon(
+  tx: Tx,
+  code: string,
+  ctx: { subtotal: number; orderId: string; customerId?: string; email: string },
+): Promise<{ coupon: Coupon; discount: number }> {
+  const normalized = normalizeCode(code);
+  // Acquire the row lock; held until the surrounding transaction commits.
+  const locked = await tx.$queryRawUnsafe<{ id: string }[]>(
+    `SELECT id FROM Coupon WHERE code = ? AND isActive = true FOR UPDATE`,
+    normalized,
+  );
+  if (!locked[0]) throw new CouponError('This code isn\'t valid.');
+  // Re-validate against the now-locked state (window, min-order, caps, per-customer).
+  const { coupon, discount } = await validateCoupon(tx, normalized, {
+    subtotal: ctx.subtotal,
+    customerId: ctx.customerId,
+    email: ctx.email,
+  });
+  await tx.coupon.update({ where: { id: coupon.id }, data: { timesRedeemed: { increment: 1 } } });
+  await tx.couponRedemption.create({
+    data: {
+      couponId: coupon.id,
+      orderId: ctx.orderId,
+      customerId: ctx.customerId ?? null,
+      email: ctx.email.toLowerCase(),
+      amount: discount,
+    },
+  });
+  return { coupon, discount };
 }
