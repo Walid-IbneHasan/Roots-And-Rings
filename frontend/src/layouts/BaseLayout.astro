@@ -11,6 +11,8 @@ import Footer from '../components/layout/Footer.astro';
 import MobileMenu from '../components/layout/MobileMenu.astro';
 import CartDrawer from '../components/cart/CartDrawer.astro';
 import { site } from '../data/site';
+import JsonLd from '../components/seo/JsonLd.astro';
+import { siteSchema } from '../lib/structured-data';
 
 interface Props {
   title?: string;
@@ -19,6 +21,7 @@ interface Props {
   noindex?: boolean;
   flushHeader?: boolean;
   footerVariant?: 'minimal' | 'full';
+  ogType?: string;
 }
 const {
   title,
@@ -27,6 +30,7 @@ const {
   noindex = false,
   flushHeader = false,
   footerVariant = 'full',
+  ogType = 'website',
 } = Astro.props;
 
 const pageTitle = title ? `${title} — ${site.name}` : site.title;
@@ -47,7 +51,7 @@ const ogImage = new URL(image, site.url).href;
     <meta name="theme-color" content="#fef9f1" />
     <meta name="generator" content={Astro.generator} />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -58,6 +62,7 @@ const ogImage = new URL(image, site.url).href;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
+    <JsonLd schema={siteSchema()} />
     <slot name="head" />
   </head>
   <body>
