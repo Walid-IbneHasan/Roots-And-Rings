@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 let orderId = '';
 
 beforeAll(async () => {
+  await prisma.job.deleteMany({ where: { status: { in: ['PENDING', 'PROCESSING'] } } });
   const order = await prisma.order.create({
     data: {
       orderNumber: 'RR-JOB-ZZ', guestEmail: 'jobs-zz@test.com', guestPhone: '0', status: 'PROCESSING', currency: 'BDT',
