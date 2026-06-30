@@ -9,12 +9,22 @@ import Img from '../../components/ui/Img.astro';
 import Icon from '../../components/ui/Icon.astro';
 import { getProduct, getRelated } from '../../lib/catalog';
 import { formatPrice } from '../../lib/format';
+import Stars from '../../components/product/Stars.astro';
+import { getSession } from '../../lib/auth';
 
 const { slug } = Astro.params as { slug: string };
 const product = await getProduct(slug);
 if (!product) return Astro.redirect('/404');
 
 const related = await getRelated(slug, 4);
+const session = getSession(Astro);
+const API = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:4000';
+interface ReviewItem { id: string; rating: number; title: string | null; body: string | null; authorName: string; createdAt: string }
+let reviews: { items: ReviewItem[]; total: number; ratingAvg: number | null; ratingCount: number } = { items: [], total: 0, ratingAvg: null, ratingCount: 0 };
+try {
+  const res = await fetch(`${API}/api/products/${encodeURIComponent(slug)}/reviews`);
+  if (res.ok) reviews = await res.json();
+} catch { /* no reviews */ }
 const isLimited = product.badges.includes('Limited Edition') || Boolean(product.edition);
 const editionLine = product.edition ? `Edition of ${product.edition.count} · Limited` : product.badges[0] ?? '';
 const si = product.seenInInteriors;
@@ -43,6 +53,7 @@ const si = product.seenInInteriors;
       </div>
 
       <p class="font-display text-headline-sm mt-3">{formatPrice(product.price)}</p>
+      {reviews.ratingCount > 0 && <div class="mt-2"><Stars value={reviews.ratingAvg} count={reviews.ratingCount} size="md" /></div>}
       {product.edition?.leadTime && (
         <p class="text-caption text-on-surface-variant mt-2">{product.edition.leadTime}</p>
       )}
@@ -83,6 +94,60 @@ const si = product.seenInInteriors;
       </div>
     </div>
   </section>
+
+  <section id="reviews" class="wrap pb-24" data-reviews data-slug={product.slug} data-logged-in={session ? 'true' : 'false'}>
+    <h2 class="font-display text-headline-md mb-2">Reviews</h2>
+    {reviews.ratingCount > 0
+      ? <div class="mb-8"><Stars value={reviews.ratingAvg} count={reviews.ratingCount} size="md" /></div>
+      : <p class="text-body-md text-on-surface-variant mb-8">No reviews yet.</p>}
+
+    <div class="flex flex-col gap-8 max-w-prose">
+      {reviews.items.map((r) => (
+        <article class="hairline-t pt-6">
+          <div class="flex items-center justify-between">
+            <Stars value={r.rating} count={0} />
+            <span class="text-caption text-on-surface-variant">{new Date(r.createdAt).toLocaleDateString()}</span>
+          </div>
+          {r.title && <h3 class="font-display text-body-lg mt-2">{r.title}</h3>}
+          {r.body && <div class="text-body-md text-on-surface-variant mt-1 leading-relaxed" set:html={r.body}></div>}
+          <span class="text-label-caps uppercase opacity-50 mt-2 block">{r.authorName}</span>
+        </article>
+      ))}
+    </div>
+
+    <div class="mt-12 max-w-prose">
+      {session ? (
+        <>
+          <p data-review-state hidden class="text-body-md text-on-surface-variant"></p>
+          <div data-review-form-wrap hidden>
+            <h3 class="font-display text-headline-sm mb-5" data-review-form-heading>Write a review</h3>
+            <form data-review-form class="flex flex-col gap-5">
+              <label class="text-label-caps uppercase opacity-60 flex flex-col gap-2">Rating
+                <select name="rating" required class="input-minimal text-body-md">
+                  <option value="5">★★★★★ — Excellent</option>
+                  <option value="4">★★★★ — Good</option>
+                  <option value="3">★★★ — Average</option>
+                  <option value="2">★★ — Poor</option>
+                  <option value="1">★ — Terrible</option>
+                </select>
+              </label>
+              <label class="text-label-caps uppercase opacity-60 flex flex-col gap-2">Title<input name="title" maxlength="120" class="input-minimal text-body-md" /></label>
+              <label class="text-label-caps uppercase opacity-60 flex flex-col gap-2">Your review<textarea name="body" rows="4" maxlength="4000" class="input-minimal text-body-md"></textarea></label>
+              <p data-review-error hidden class="text-caption text-error border border-error px-4 py-3"></p>
+              <button type="submit" class="btn-solid w-fit">Submit review</button>
+            </form>
+          </div>
+        </>
+      ) : (
+        <p class="text-body-md text-on-surface-variant">
+          <a href={`/account/login?next=/objects/${product.slug}`} class="btn-editorial">Sign in</a> to write a review (available after your order is delivered).
+        </p>
+      )}
+    </div>
+  </section>
+  <script>
+    import '../../scripts/reviews.ts';
+  </script>
 
   {si && (
     <section class="relative pb-24">
