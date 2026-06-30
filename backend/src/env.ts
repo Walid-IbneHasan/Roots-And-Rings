@@ -23,6 +23,16 @@ const schema = z.object({
   JWT_EXPIRES_IN: z.string().default('7d'),
   OTP_TTL_MIN: z.coerce.number().int().positive().default(15),
   OTP_MAX_ATTEMPTS: z.coerce.number().int().positive().default(5),
+  // Phase 6 — email + job worker
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().int().positive().default(587),
+  SMTP_SECURE: z.string().optional().transform((v) => v === 'true'),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  EMAIL_FROM: z.string().default('Roots & Rings <no-reply@rootsandrings.example>'),
+  JOBS_WORKER_ENABLED: z.string().optional().transform((v) => v !== 'false'),
+  JOBS_POLL_INTERVAL_MS: z.coerce.number().int().positive().default(10000),
+  JOBS_BATCH_SIZE: z.coerce.number().int().positive().default(10),
 });
 
 const parsed = schema.safeParse(process.env);
