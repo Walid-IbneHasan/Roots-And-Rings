@@ -10,6 +10,8 @@ import { issueOtp, verifyOtp } from '../auth/otp';
 import { sendOtpEmail } from '../notifications/email';
 import { uploadsService } from '../uploads/service';
 import { profileBody, passwordChangeBody } from './schemas';
+import { upsertReview, canReview } from '../reviews/service';
+import { reviewBody } from '../reviews/schemas';
 
 function summarize(o: { orderNumber: string; status: string; placedAt: Date; grandTotal: unknown; items: { quantity: number }[] }) {
   return {
@@ -49,7 +51,12 @@ export default async function accountRoutes(app: FastifyInstance) {
       include: { items: true, payments: true, shipment: true },
     });
     if (!order) throw httpError(404, 'Order not found');
-    return orderToDto(order);
+    const dto = orderToDto(order);
+    const ids = [...new Set(order.items.map((i) => i.productId).filter((x): x is string => !!x))];
+    const products = ids.length ? await app.prisma.product.findMany({ where: { id: { in: ids } }, select: { id: true, slug: true } }) : [];
+    const slugById = new Map(products.map((p) => [p.id, p.slug]));
+    const items = dto.items.map((it, idx) => ({ ...it, slug: order.items[idx].productId ? slugById.get(order.items[idx].productId!) ?? null : null }));
+    return { ...dto, items };
   });
 
   app.patch('/api/account/profile', { preHandler: requireCustomer }, async (request) => {
@@ -85,6 +92,24 @@ export default async function accountRoutes(app: FastifyInstance) {
     await verifyOtp(app.prisma, me.id, 'PASSWORD_CHANGE', code);
     await app.prisma.customer.update({ where: { id: me.id }, data: { passwordHash: await hashPassword(newPassword) } });
     return { ok: true };
+  });
+
+  app.post('/api/account/reviews', { preHandler: requireCustomer }, async (request, reply) => {
+    const { productSlug, rating, title, body } = reviewBody.parse(request.body);
+    const product = await app.prisma.product.findUnique({ where: { slug: productSlug }, select: { id: true } });
+    if (!product) throw httpError(404, 'Product not found');
+    const review = await upsertReview(app.prisma, request.customer!.id, product.id, request.customer!.name, { rating, title, body });
+    return reply.status(201).send({ review: { id: review.id, rating: review.rating, title: review.title, body: review.body, status: review.status } });
+  });
+
+  app.get('/api/account/reviews/can-review', { preHandler: requireCustomer }, async (request) => {
+    const { slug } = request.query as { slug?: string };
+    if (!slug) throw httpError(400, 'slug is required');
+    const product = await app.prisma.product.findUnique({ where: { slug }, select: { id: true } });
+    if (!product) return { eligible: false, review: null };
+    const eligible = await canReview(app.prisma, request.customer!.id, product.id);
+    const existing = await app.prisma.review.findUnique({ where: { productId_customerId: { productId: product.id, customerId: request.customer!.id } } });
+    return { eligible, review: existing ? { rating: existing.rating, title: existing.title, body: existing.body } : null };
   });
 
   registerAddressRoutes(app);
