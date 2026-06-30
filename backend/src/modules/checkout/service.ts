@@ -6,7 +6,7 @@ import { generateOrderNumber } from '../../lib/order-number';
 import { httpError } from '../../lib/errors';
 import { reserveForOrder, commitReservations, checkLowStock } from '../inventory/service';
 import { getProvider } from '../payments/service';
-import { enqueueJob, runJobInline } from '../notifications/jobs';
+import { enqueueJob } from '../notifications/jobs';
 import type { CheckoutInput } from './schemas';
 import { redeemCoupon } from '../coupons/service';
 
@@ -111,8 +111,7 @@ export async function placeOrder(prisma: PrismaClient, input: CheckoutInput, cus
   let credentialsMissing = false;
 
   if (cod) {
-    const job = await enqueueJob(prisma, 'email.order_confirmation', { orderId: result.order.id });
-    await runJobInline(prisma, job.id);
+    await enqueueJob(prisma, 'email.order_confirmation', { orderId: result.order.id });
     for (const r of resolved) await checkLowStock(prisma, r.variantId);
   } else {
     const session = await getProvider('BKASH').createSession(result.order, result.payment);

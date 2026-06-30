@@ -34,6 +34,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await app.prisma.job.deleteMany({ where: { type: 'email.order_confirmation' } });
   await app.prisma.order.deleteMany({ where: { guestEmail: EMAIL } });
   await app.prisma.product.deleteMany({ where: { sku: { startsWith: 'TEST-AO-' } } });
   await app.close();
