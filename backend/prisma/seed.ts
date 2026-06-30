@@ -63,6 +63,18 @@ async function main() {
   });
   console.log(`Seeded demo customer: ${demoEmail} / ChangeMe123!`);
 
+  await prisma.coupon.upsert({
+    where: { code: 'SAVE20' },
+    update: {},
+    create: { code: 'SAVE20', description: '20% off your order', type: 'PERCENT', value: 20 },
+  });
+  await prisma.coupon.upsert({
+    where: { code: 'WELCOME100' },
+    update: {},
+    create: { code: 'WELCOME100', description: '৳100 off orders over ৳500', type: 'FIXED', value: 100, minOrderSubtotal: 500 },
+  });
+  console.log('Seeded demo coupons: SAVE20, WELCOME100');
+
   // --- PRODUCT_TYPE categories ---
   const typeIdByName = new Map<string, string>();
   for (let i = 0; i < PRODUCT_TYPES.length; i++) {
