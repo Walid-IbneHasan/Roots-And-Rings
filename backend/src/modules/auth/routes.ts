@@ -7,6 +7,7 @@ import { sendOtpEmail } from '../notifications/email';
 import { requireCustomer } from './guards';
 import { customerDto } from './dto';
 import { registerBody, loginBody, verifyEmailBody, forgotBody, resetBody } from './schemas';
+import { registerGoogleRoute } from './google';
 
 const tightLimit = { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } };
 
@@ -65,4 +66,5 @@ export default async function authRoutes(app: FastifyInstance) {
     await app.prisma.customer.update({ where: { id: customer.id }, data: { passwordHash: await hashPassword(newPassword) } });
     return { ok: true };
   });
+  registerGoogleRoute(app);
 }
