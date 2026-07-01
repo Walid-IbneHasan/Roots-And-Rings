@@ -87,6 +87,10 @@ export async function listProducts(prisma: PrismaClient, q: ProductsQuery): Prom
   if (q.attribute) items = items.filter((i) => i.badges.includes(q.attribute!));
   if (q.onSale) items = items.filter((i) => i.isOnSale || i.isOnFlash);
 
+  // Sort by the EFFECTIVE (resolved) price so ordering matches the prices shoppers see (sales applied).
+  if (q.sort === 'price-asc') items.sort((a, b) => a.price - b.price);
+  else if (q.sort === 'price-desc') items.sort((a, b) => b.price - a.price);
+
   const total = items.length;
   const page = q.page ?? 1;
   const pageSize = q.pageSize ?? (total || 1);
