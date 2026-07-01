@@ -14,6 +14,7 @@ export interface ProductQuery {
   categories?: string[];
   clayBodies?: string[];
   attributes?: string[];
+  onSale?: boolean;
   sort?: SortKey;
 }
 
@@ -31,12 +32,13 @@ function sortProducts(list: Product[], sort: SortKey): Product[] {
 }
 
 export async function getProducts(query: ProductQuery = {}): Promise<Product[]> {
-  const { categories, clayBodies, attributes, sort = 'newest' } = query;
+  const { categories, clayBodies, attributes, onSale, sort = 'newest' } = query;
   let list = await api.fetchProducts();
 
   if (categories?.length) list = list.filter((p) => categories.includes(p.category));
   if (clayBodies?.length) list = list.filter((p) => clayBodies.includes(p.clayBody));
   if (attributes?.length) list = list.filter((p) => attributes.some((a) => p.badges.includes(a)));
+  if (onSale) list = list.filter((p) => p.isOnSale || p.isOnFlash);
 
   return sortProducts(list, sort);
 }

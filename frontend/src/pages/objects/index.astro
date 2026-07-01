@@ -10,7 +10,8 @@ import { getProducts, getFacets } from '../../lib/catalog';
 import JsonLd from '../../components/seo/JsonLd.astro';
 import { itemListSchema, breadcrumbSchema } from '../../lib/structured-data';
 
-const products = await getProducts({ sort: 'newest' });
+const onSale = Astro.url.searchParams.get('onSale') === 'true';
+const products = await getProducts({ sort: 'newest', onSale });
 const facets = await getFacets();
 ---
 
