@@ -8,7 +8,7 @@ import WishlistButton from '../../components/product/WishlistButton.astro';
 import Img from '../../components/ui/Img.astro';
 import Icon from '../../components/ui/Icon.astro';
 import { getProduct, getRelated } from '../../lib/catalog';
-import { formatPrice } from '../../lib/format';
+import { formatPrice, discountPercent } from '../../lib/format';
 import Stars from '../../components/product/Stars.astro';
 import { getSession } from '../../lib/auth';
 import JsonLd from '../../components/seo/JsonLd.astro';
@@ -64,7 +64,19 @@ const si = product.seenInInteriors;
         <WishlistButton slug={product.slug} class="mt-2 shrink-0" />
       </div>
 
-      <p class="font-display text-headline-sm mt-3">{formatPrice(product.price)}</p>
+      <p class="font-display text-headline-sm mt-3">
+        {product.compareAt != null && product.compareAt > product.price ? (
+          <>
+            <s class="text-on-surface-variant opacity-50 mr-3 font-sans text-body-lg">{formatPrice(product.compareAt, product.currency)}</s>
+            <span>{formatPrice(product.price, product.currency)}</span>
+            <span class="ml-3 align-middle inline-block bg-on-surface text-surface text-label-caps uppercase px-2 py-0.5 rounded-full">
+              −{discountPercent(product.price, product.compareAt)}% {product.isOnFlash ? 'Flash' : 'Off'}
+            </span>
+          </>
+        ) : (
+          formatPrice(product.price, product.currency)
+        )}
+      </p>
       {reviews.ratingCount > 0 && <div class="mt-2"><Stars value={reviews.ratingAvg} count={reviews.ratingCount} size="md" /></div>}
       {product.edition?.leadTime && (
         <p class="text-caption text-on-surface-variant mt-2">{product.edition.leadTime}</p>

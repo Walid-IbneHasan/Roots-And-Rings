@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatPrice } from '../src/lib/format';
+import { formatPrice, discountPercent } from '../src/lib/format';
 
 describe('formatPrice', () => {
   it('formats a whole BDT amount with the ৳ symbol and no decimals', () => {
@@ -16,5 +16,13 @@ describe('formatPrice', () => {
 
   it('honors an explicit currency', () => {
     expect(formatPrice(420, 'EUR')).toBe('€420');
+  });
+});
+
+describe('discountPercent', () => {
+  it('computes the rounded percent off', () => {
+    expect(discountPercent(300, 500)).toBe(40);
+    expect(discountPercent(600, 1000)).toBe(40);
+    expect(discountPercent(950, 1000)).toBe(5);
   });
 });

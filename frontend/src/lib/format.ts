@@ -15,3 +15,9 @@ export function formatPrice(amount: number, currency: string = 'BDT'): string {
   const n = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(Math.round(amount));
   return symbol ? `${symbol}${n}` : `${currency} ${n}`;
 }
+
+/** Whole-number percent off, e.g. discountPercent(300, 500) === 40. */
+export function discountPercent(price: number, compareAt: number): number {
+  if (compareAt <= 0 || price >= compareAt) return 0;
+  return Math.round(((compareAt - price) / compareAt) * 100);
+}

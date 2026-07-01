@@ -35,6 +35,9 @@ interface ApiProduct {
   ratingAvg?: number | null;
   ratingCount?: number;
   availability?: 'in_stock' | 'out_of_stock' | 'backorder';
+  compareAt?: number | null;
+  isOnSale?: boolean;
+  isOnFlash?: boolean;
 }
 interface ApiCollection {
   slug: string;
@@ -67,6 +70,9 @@ function toProduct(p: ApiProduct): Product {
     ratingAvg: p.ratingAvg ?? null,
     ratingCount: p.ratingCount ?? 0,
     availability: p.availability ?? 'in_stock',
+    compareAt: p.compareAt ?? null,
+    isOnSale: p.isOnSale ?? false,
+    isOnFlash: p.isOnFlash ?? false,
   };
 }
 
