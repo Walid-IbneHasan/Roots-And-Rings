@@ -19,7 +19,39 @@
   </label>
   <label>Tagline <input name="tagline" value="<%= it.cat && it.cat.tagline ? it.cat.tagline : '' %>" /></label>
   <label>Description <textarea name="description"><%= it.cat && it.cat.description ? it.cat.description : '' %></textarea></label>
-  <label>Image URL <input name="imageUrl" value="<%= it.cat && it.cat.imageUrl ? it.cat.imageUrl : '' %>" placeholder="/uploads/categories/..." /></label>
+  <label>Image
+    <input type="file" accept="image/*" data-image-picker />
+    <span data-image-status style="font-size:12px;opacity:.6"></span>
+  </label>
+  <label>Image URL <input name="imageUrl" data-image-url value="<%= it.cat && it.cat.imageUrl ? it.cat.imageUrl : '' %>" placeholder="Upload a photo, or paste /uploads/categories/..." /></label>
+  <img data-image-preview src="<%= it.cat && it.cat.imageUrl ? it.cat.imageUrl : '' %>" alt="" style="max-width:160px;border-radius:6px;margin-top:4px;<%= it.cat && it.cat.imageUrl ? '' : 'display:none' %>" />
+  <script>
+    (function () {
+      var picker = document.querySelector('[data-image-picker]');
+      var urlInput = document.querySelector('[data-image-url]');
+      var preview = document.querySelector('[data-image-preview]');
+      var status = document.querySelector('[data-image-status]');
+      if (!picker) return;
+      picker.addEventListener('change', async function () {
+        var f = picker.files && picker.files[0];
+        if (!f) return;
+        status.textContent = 'Uploading…';
+        try {
+          var fd = new FormData();
+          fd.append('image', f);
+          var r = await fetch('/admin/uploads/image?kind=categories', { method: 'POST', body: fd });
+          if (!r.ok) throw new Error('Upload failed');
+          var data = await r.json();
+          urlInput.value = data.url;
+          preview.src = data.url;
+          preview.style.display = '';
+          status.textContent = 'Uploaded ✓ (WebP)';
+        } catch (e) {
+          status.textContent = 'Upload failed — try another image';
+        }
+      });
+    })();
+  </script>
   <div class="grid2">
     <label>Sort order <input type="number" name="sortOrder" value="<%= it.cat ? it.cat.sortOrder : 0 %>" /></label>
     <label>Status
