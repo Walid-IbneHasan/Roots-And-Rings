@@ -6,12 +6,19 @@ import { loginAdmin, csrfFrom, formPost } from './helpers';
 let app: FastifyInstance;
 let cookie: string;
 
+// The test's category slug — cleared before AND after so the suite is order-independent.
+// (A leftover 'test-collection-zz' makes the create's uniqueSlug shift the new slug to
+// 'test-collection-zz-2', so the exact-slug lookup in the public-API assertion would miss.)
+const TEST_SLUG_PREFIX = 'test-collection-zz';
+
 beforeAll(async () => {
   app = await buildApp();
   await app.ready();
+  await app.prisma.category.deleteMany({ where: { slug: { startsWith: TEST_SLUG_PREFIX } } });
   cookie = await loginAdmin(app);
 });
 afterAll(async () => {
+  await app.prisma.category.deleteMany({ where: { slug: { startsWith: TEST_SLUG_PREFIX } } });
   await app.close();
 });
 
