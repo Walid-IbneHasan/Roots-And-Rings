@@ -126,6 +126,21 @@ export async function getFeatured(prisma: PrismaClient): Promise<ProductDTO[]> {
   return rows.map((r) => mapProduct(r));
 }
 
+export async function getFlashProducts(prisma: PrismaClient, limit = 8): Promise<ProductDTO[]> {
+  const now = new Date();
+  const rows = await prisma.product.findMany({
+    where: {
+      isActive: true,
+      flashPrice: { not: null },
+      flashStartAt: { lte: now },
+      flashEndAt: { gte: now },
+    },
+    orderBy: { flashEndAt: 'asc' },
+    include,
+  });
+  return rows.map((r) => mapProduct(r, now)).filter((p) => p.isOnFlash).slice(0, limit);
+}
+
 export async function getCollections(prisma: PrismaClient): Promise<CollectionDTO[]> {
   const rows = await prisma.category.findMany({
     where: { kind: 'COLLECTION', isActive: true },

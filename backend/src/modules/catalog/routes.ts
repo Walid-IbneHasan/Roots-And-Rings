@@ -6,6 +6,7 @@ import {
   getProductBySlug,
   getRelated,
   getFeatured,
+  getFlashProducts,
   getCollections,
   getCollectionBySlug,
   getFacets,
@@ -38,6 +39,8 @@ export default async function catalogRoutes(app: FastifyInstance) {
     const q = productsQuery.parse(request.query);
     return listProducts(app.prisma, q);
   });
+
+  app.get('/api/products/flash', async () => getFlashProducts(app.prisma));
 
   app.get('/api/products/:slug', async (request, reply) => {
     const { slug } = request.params as { slug: string };
