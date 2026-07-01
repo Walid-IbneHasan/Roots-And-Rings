@@ -1,6 +1,6 @@
 <% var o = it.order; %>
 <div class="toolbar">
-  <div><h1><%= o.orderNumber %></h1><p class="sub muted"><%= new Date(o.createdAt).toLocaleString() %> · <span class="pill"><%= o.status %></span></p></div>
+  <div><h1><%= o.orderNumber %></h1><p class="sub muted"><%= new Date(o.createdAt).toLocaleString() %> · <span class="pill"><%= o.status %></span> · <span class="pill"><%= o.source %></span></p></div>
   <a class="btn ghost" href="/admin/orders">← All orders</a>
 </div>
 

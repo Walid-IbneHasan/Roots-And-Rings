@@ -1,5 +1,6 @@
 <div class="toolbar">
   <div><h1>Orders</h1><p class="sub"><%= it.orders.length %> orders</p></div>
+  <a class="btn" href="/admin/orders/new">+ New order</a>
 </div>
 <form method="get" action="/admin/orders" style="margin-bottom:16px;display:flex;gap:10px;align-items:center">
   <input name="q" value="<%= it.q %>" placeholder="Search number / email…" style="width:240px" />
@@ -10,14 +11,15 @@
   <button class="btn ghost sm" type="submit">Filter</button>
 </form>
 <table>
-  <thead><tr><th>Number</th><th>Date</th><th>Customer</th><th>Status</th><th>Payment</th><th>Total</th><th></th></tr></thead>
+  <thead><tr><th>Number</th><th>Date</th><th>Customer</th><th>Source</th><th>Status</th><th>Payment</th><th>Total</th><th></th></tr></thead>
   <tbody>
-    <% if (!it.orders.length) { %><tr><td colspan="7" class="muted">No orders yet.</td></tr><% } %>
+    <% if (!it.orders.length) { %><tr><td colspan="8" class="muted">No orders yet.</td></tr><% } %>
     <% it.orders.forEach(function (o) { %>
       <tr>
         <td><a href="/admin/orders/<%= o.id %>"><%= o.orderNumber %></a></td>
         <td class="muted"><%= new Date(o.createdAt).toLocaleDateString() %></td>
         <td><%= o.guestEmail %></td>
+        <td><span class="pill"><%= o.source %></span></td>
         <td><span class="pill"><%= o.status %></span></td>
         <td class="muted"><%= o.payments[0] ? o.payments[0].provider + ' · ' + o.payments[0].status : '—' %></td>
         <td>৳<%= o.grandTotal %></td>
