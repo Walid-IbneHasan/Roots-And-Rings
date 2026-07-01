@@ -97,6 +97,11 @@ export async function fetchProduct(slug: string): Promise<Product | undefined> {
 export async function fetchFeatured(): Promise<Product[]> {
   return ((await getJson<ApiProduct[]>('/api/featured')) ?? []).map(toProduct);
 }
+export async function fetchFlash(): Promise<Product[]> {
+  const res = await fetch(`${API_BASE}/api/products/flash`);
+  if (!res.ok) return [];
+  return (await res.json()).map(toProduct);
+}
 export async function fetchRelated(slug: string): Promise<Product[]> {
   return ((await getJson<ApiProduct[]>(`/api/products/${encodeURIComponent(slug)}/related`)) ?? []).map(toProduct);
 }

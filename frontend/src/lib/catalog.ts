@@ -57,6 +57,10 @@ export async function getFeatured(): Promise<Product[]> {
   return api.fetchFeatured();
 }
 
+export async function getFlash(): Promise<Product[]> {
+  return api.fetchFlash();
+}
+
 export async function getCollections(): Promise<Collection[]> {
   return api.fetchCollections();
 }
