@@ -48,6 +48,9 @@ describe('createManualOrder', () => {
     expect(order!.paidAt).toBeNull();
     expect(order!.payments[0].provider).toBe('MANUAL');
     expect(order!.payments[0].status).toBe('INITIATED');
+    expect(order!.customerId).toBeNull();
+    const shipment = await prisma.shipment.findFirst({ where: { orderId } });
+    expect(shipment?.status).toBe('PENDING');
     const after = (await prisma.productVariant.findUnique({ where: { id: variantId } }))!.stock;
     expect(after).toBe(before - 2);
   });
@@ -62,6 +65,12 @@ describe('createManualOrder', () => {
 
   it('links an existing customer by email', async () => {
     const { orderId } = await createManualOrder(prisma, base({ contact: { name: 'Linked', email: LINKED_EMAIL, phone: '01700000000' } }));
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    expect(order!.customerId).not.toBeNull();
+  });
+
+  it('links an existing customer by email case-insensitively', async () => {
+    const { orderId } = await createManualOrder(prisma, base({ contact: { name: 'Linked', email: LINKED_EMAIL.toUpperCase(), phone: '01700000000' } }));
     const order = await prisma.order.findUnique({ where: { id: orderId } });
     expect(order!.customerId).not.toBeNull();
   });
