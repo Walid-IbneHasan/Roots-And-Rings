@@ -51,6 +51,7 @@ export async function placeOrder(prisma: PrismaClient, input: CheckoutInput, cus
         guestEmail: input.contact.email,
         guestPhone: input.contact.phone,
         status: cod ? 'PROCESSING' : 'AWAITING_PAYMENT',
+        source: 'WEBSITE',
         currency: 'BDT',
         subtotal: totals.subtotal,
         discountTotal: totals.discountTotal,

@@ -205,6 +205,14 @@ enum OrderStatus {
 enum PaymentProviderKind {
   COD
   BKASH
+  MANUAL
+}
+
+enum OrderSource {
+  WEBSITE
+  FACEBOOK
+  INSTAGRAM
+  OTHER
 }
 
 enum PaymentStatus {
@@ -300,6 +308,7 @@ model Order {
   guestEmail      String
   guestPhone      String?
   status          OrderStatus @default(AWAITING_PAYMENT)
+  source          OrderSource @default(WEBSITE)
   currency        String      @default("BDT")
   subtotal        Decimal     @db.Decimal(12, 2)
   discountTotal   Decimal     @default(0) @db.Decimal(12, 2)
@@ -322,6 +331,7 @@ model Order {
   @@index([status])
   @@index([createdAt])
   @@index([guestEmail])
+  @@index([source])
 }
 
 model OrderItem {
