@@ -6,6 +6,8 @@ import { releaseReservations, restockOrder } from '../inventory/service';
 import { markPaymentPaid, refundPayment } from '../payments/service';
 import { writeAudit } from '../../lib/audit';
 import type { OrderStatus } from '@prisma/client';
+import { createManualOrder, type ManualOrderInput } from '../checkout/service';
+import { listProducts } from '../catalog/service';
 
 const rc = { isolationLevel: 'ReadCommitted' as const };
 const blocked = (reply: FastifyReply, msg: string) =>
@@ -31,6 +33,55 @@ export function registerAdminOrders(app: FastifyInstance) {
       csrf,
       data: { orders, status: status ?? '', q: q ?? '', statuses: Object.keys(ORDER_TRANSITIONS) },
     });
+  });
+
+  app.get('/admin/orders/new', authed, async (req, reply) => {
+    const user = getUser(req)!;
+    const csrf = reply.generateCsrf();
+    const { items: products } = await listProducts(app.prisma, {});
+    return renderPage(reply, { template: 'order-new', title: 'New order', user, active: 'orders', csrf, data: { products } });
+  });
+
+  app.post('/admin/orders/new', authedWrite, async (req, reply) => {
+    const body = req.body as Record<string, string>;
+    const source = body.source as ManualOrderInput['source'];
+    if (!['WEBSITE', 'FACEBOOK', 'INSTAGRAM', 'OTHER'].includes(source)) return blocked(reply, 'Invalid source.');
+
+    const active = await app.prisma.product.findMany({ where: { isActive: true }, select: { slug: true } });
+    const items = active
+      .map((p) => ({ slug: p.slug, qty: parseInt(body[`qty_${p.slug}`] || '0', 10) || 0 }))
+      .filter((i) => i.qty > 0);
+    if (!items.length) return blocked(reply, 'Add at least one product (quantity ≥ 1).');
+
+    const name = (body.name || '').trim();
+    const emailAddr = (body.email || '').trim();
+    const phone = (body.phone || '').trim();
+    const line1 = (body.line1 || '').trim();
+    const city = (body.city || '').trim();
+    const district = (body.district || '').trim();
+    if (!name || !emailAddr || !phone || !line1 || !city || !district) {
+      return blocked(reply, 'Name, email, phone, and shipping line1/city/district are required.');
+    }
+
+    const input: ManualOrderInput = {
+      items,
+      contact: { name, email: emailAddr, phone },
+      shipping: {
+        line1,
+        line2: (body.line2 || '').trim() || undefined,
+        city,
+        district,
+        postalCode: (body.postalCode || '').trim() || undefined,
+      },
+      source,
+      paid: body.paid === 'on',
+    };
+    try {
+      const { orderId } = await createManualOrder(app.prisma, input);
+      return reply.redirect(`/admin/orders/${orderId}`);
+    } catch (e) {
+      return blocked(reply, e instanceof Error ? e.message : 'Could not create the order.');
+    }
   });
 
   app.get('/admin/orders/:id', authed, async (req, reply) => {

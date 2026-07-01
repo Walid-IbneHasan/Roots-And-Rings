@@ -1,0 +1,48 @@
+<h1>New manual order</h1>
+<form class="stack" method="post" action="/admin/orders/new">
+  <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
+
+  <div class="grid2">
+    <label>Channel / source
+      <select name="source">
+        <option value="WEBSITE">Website</option>
+        <option value="FACEBOOK" selected>Facebook</option>
+        <option value="INSTAGRAM">Instagram</option>
+        <option value="OTHER">Other</option>
+      </select>
+    </label>
+    <label style="align-self:end"><input type="checkbox" name="paid" value="on" style="width:auto" /> Payment received</label>
+  </div>
+
+  <h2>Products</h2>
+  <table class="table">
+    <thead><tr><th>Product</th><th>Price</th><th>Qty</th></tr></thead>
+    <tbody>
+      <% it.products.forEach(function (p) { %>
+        <tr>
+          <td><%= p.name %></td>
+          <td class="muted">৳<%= p.price %></td>
+          <td><input type="number" name="qty_<%= p.slug %>" min="0" value="0" style="width:70px" /></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <h2>Customer</h2>
+  <div class="grid2">
+    <label>Name <input name="name" required /></label>
+    <label>Email <input type="email" name="email" required /></label>
+  </div>
+  <label>Phone <input name="phone" required /></label>
+
+  <h2>Shipping</h2>
+  <label>Address line 1 <input name="line1" required /></label>
+  <label>Address line 2 <input name="line2" /></label>
+  <div class="grid2">
+    <label>City <input name="city" required /></label>
+    <label>District <input name="district" required /></label>
+  </div>
+  <label>Postal code <input name="postalCode" /></label>
+
+  <button class="btn" type="submit">Create order</button>
+</form>
