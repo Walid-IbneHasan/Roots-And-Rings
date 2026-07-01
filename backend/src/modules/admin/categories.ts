@@ -5,6 +5,7 @@ import { getUser, requireAdminSession } from './guards';
 import { uniqueSlug } from '../../lib/slug';
 import { writeAudit } from '../../lib/audit';
 import { invalidateMenu } from '../../lib/menu-cache';
+import { uploadsService, type UploadKind } from '../uploads/service';
 
 const bodySchema = z.object({
   kind: z.enum(['PRODUCT_TYPE', 'COLLECTION']),
@@ -102,5 +103,15 @@ export function registerAdminCategories(app: FastifyInstance) {
       await writeAudit(app.prisma, { actor: user, action: 'delete', entity: 'Category', entityId: id, before, req });
     }
     return reply.redirect('/admin/categories');
+  });
+
+  const UPLOAD_KINDS: UploadKind[] = ['products', 'categories', 'avatars'];
+  app.post('/admin/uploads/image', { preHandler: requireAdminSession }, async (req, reply) => {
+    const raw = (req.query as { kind?: string }).kind;
+    const kind: UploadKind = UPLOAD_KINDS.includes(raw as UploadKind) ? (raw as UploadKind) : 'categories';
+    const file = await req.file();
+    if (!file) return reply.status(400).send({ error: 'BadRequest', message: 'No image provided', statusCode: 400 });
+    const out = await uploadsService.processImage(await file.toBuffer(), kind);
+    return reply.send({ url: out.url, width: out.width, height: out.height });
   });
 }
