@@ -153,3 +153,13 @@ export async function getCollectionBySlug(prisma: PrismaClient, slug: string) {
   const row = await prisma.category.findFirst({ where: { slug, kind: 'COLLECTION' } });
   return row ? mapCollection(row) : null;
 }
+
+export async function getProductsByCollection(prisma: PrismaClient, slug: string): Promise<ProductDTO[]> {
+  const now = new Date();
+  const rows = await prisma.product.findMany({
+    where: { isActive: true, collections: { some: { slug, kind: 'COLLECTION' } } },
+    include,
+    orderBy: { createdAt: 'desc' },
+  });
+  return rows.map((r) => mapProduct(r, now));
+}

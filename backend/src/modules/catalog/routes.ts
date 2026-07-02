@@ -9,6 +9,7 @@ import {
   getFlashProducts,
   getCollections,
   getCollectionBySlug,
+  getProductsByCollection,
   getFacets,
 } from './service';
 
@@ -33,6 +34,11 @@ export default async function catalogRoutes(app: FastifyInstance) {
     const c = await getCollectionBySlug(app.prisma, slug);
     if (!c) return reply.status(404).send({ error: 'NotFound', message: 'Collection not found', statusCode: 404 });
     return c;
+  });
+
+  app.get('/api/collections/:slug/products', async (request) => {
+    const { slug } = request.params as { slug: string };
+    return getProductsByCollection(app.prisma, slug);
   });
 
   app.get('/api/products', async (request) => {
