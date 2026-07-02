@@ -81,3 +81,65 @@ export async function getPeakWeekdays(prisma: PrismaClient, period: Period) {
   const map = new Map(rows.map((r) => [Number(r.weekday), Number(r.orders)]));
   return Array.from({ length: 7 }, (_, i) => ({ weekday: i + 1, orders: map.get(i + 1) ?? 0 }));
 }
+
+async function liveItems(prisma: PrismaClient, period: Period) {
+  return prisma.orderItem.findMany({
+    where: { order: { ...LIVE_WHERE, createdAt: { gte: windowStart(period) } } },
+    select: { productId: true, productName: true, quantity: true, lineTotal: true },
+  });
+}
+
+export async function getTopProducts(prisma: PrismaClient, period: Period, limit = 10) {
+  const items = await liveItems(prisma, period);
+  const map = new Map<string, { name: string; units: number; revenue: number }>();
+  for (const it of items) {
+    const key = it.productId ?? `name:${it.productName}`;
+    const cur = map.get(key) ?? { name: it.productName, units: 0, revenue: 0 };
+    cur.units += it.quantity;
+    cur.revenue += Number(it.lineTotal);
+    map.set(key, cur);
+  }
+  return [...map.values()].sort((a, b) => b.revenue - a.revenue).slice(0, limit);
+}
+
+export async function getTopCategories(prisma: PrismaClient, period: Period) {
+  const items = await liveItems(prisma, period);
+  const ids = [...new Set(items.map((i) => i.productId).filter((x): x is string => !!x))];
+  const products = ids.length
+    ? await prisma.product.findMany({ where: { id: { in: ids } }, select: { id: true, category: { select: { name: true } } } })
+    : [];
+  const catOf = new Map(products.map((p) => [p.id, p.category?.name ?? 'Uncategorized']));
+  const map = new Map<string, { name: string; units: number; revenue: number }>();
+  for (const it of items) {
+    const name = (it.productId && catOf.get(it.productId)) || 'Uncategorized';
+    const cur = map.get(name) ?? { name, units: 0, revenue: 0 };
+    cur.units += it.quantity;
+    cur.revenue += Number(it.lineTotal);
+    map.set(name, cur);
+  }
+  return [...map.values()].sort((a, b) => b.revenue - a.revenue);
+}
+
+export async function getTopCollections(prisma: PrismaClient, period: Period) {
+  const items = await liveItems(prisma, period);
+  const ids = [...new Set(items.map((i) => i.productId).filter((x): x is string => !!x))];
+  const products = ids.length
+    ? await prisma.product.findMany({
+        where: { id: { in: ids } },
+        select: { id: true, collections: { where: { kind: 'COLLECTION' }, select: { name: true } } },
+      })
+    : [];
+  const collOf = new Map(products.map((p) => [p.id, p.collections.map((c) => c.name)]));
+  const map = new Map<string, { name: string; units: number; revenue: number }>();
+  for (const it of items) {
+    const names = (it.productId && collOf.get(it.productId)) || [];
+    const targets = names.length ? names : ['None'];
+    for (const name of targets) {
+      const cur = map.get(name) ?? { name, units: 0, revenue: 0 };
+      cur.units += it.quantity;
+      cur.revenue += Number(it.lineTotal);
+      map.set(name, cur);
+    }
+  }
+  return [...map.values()].sort((a, b) => b.revenue - a.revenue);
+}
