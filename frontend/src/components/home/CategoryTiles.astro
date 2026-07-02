@@ -17,7 +17,7 @@ const tiles = [
     offset: true,
   },
   {
-    title: 'Sculptural Objects',
+    title: 'Sculptural',
     href: '/products?category=Sculptural',
     src: 'category-sculptural',
     alt: 'An abstract ceramic sculpture of twisting organic forms in a chalky white finish.',
@@ -28,6 +28,10 @@ const tiles = [
 
 <section class="bg-surface-container/40 py-section-gap">
   <div class="wrap fade-up">
+    <div class="mb-8 md:mb-12">
+      <span class="text-label-caps uppercase opacity-60 mb-2 block">Shop by Category</span>
+      <h2 class="font-display text-display-mobile md:text-display-lg">Browse by Category</h2>
+    </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
       {tiles.map((tile) => (
         <a href={tile.href} class={`group block ${tile.offset ? 'md:mt-24' : ''}`}>
