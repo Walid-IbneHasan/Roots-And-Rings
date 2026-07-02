@@ -38,7 +38,7 @@ export async function buildCartLookup(): Promise<Record<string, CartEntry>> {
       name: p.name,
       subtitle: p.subtitle,
       price: p.price,
-      href: `/objects/${p.slug}`,
+      href: `/products/${p.slug}`,
       img,
       alt: first.alt,
     };

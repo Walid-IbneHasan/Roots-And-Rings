@@ -12,7 +12,7 @@ const lookupJson = lookupToJson(await buildCartLookup());
     <!-- Empty state -->
     <div data-cart-empty hidden class="py-20 flex flex-col items-center text-center gap-6">
       <p class="text-body-lg text-on-surface-variant">Your bag is currently empty.</p>
-      <a href="/objects" class="btn-solid">Browse Objects</a>
+      <a href="/products" class="btn-solid">Browse Products</a>
     </div>
 
     <!-- Content -->
@@ -34,7 +34,7 @@ const lookupJson = lookupToJson(await buildCartLookup());
           <span data-cart-total>€0</span>
         </div>
         <a href="/checkout" class="btn-solid w-full mt-2 text-center">Proceed to Checkout</a>
-        <a href="/objects" class="btn-editorial text-label-caps uppercase mx-auto">Continue Shopping</a>
+        <a href="/products" class="btn-editorial text-label-caps uppercase mx-auto">Continue Shopping</a>
       </aside>
     </div>
   </section>

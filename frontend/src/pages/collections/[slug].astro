@@ -15,7 +15,7 @@ const categories = [...new Set(products.map((p) => p.category).filter(Boolean))]
 
 <BaseLayout title={collection.name} description={collection.tagline || collection.description || `Pieces from the ${collection.name} collection.`}>
   <JsonLd slot="head" schema={breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Collections', url: '/collections' }, { name: collection.name, url: `/collections/${collection.slug}` }])} />
-  <JsonLd slot="head" schema={itemListSchema(products.map((p) => ({ name: p.name, url: `/objects/${p.slug}` })))} />
+  <JsonLd slot="head" schema={itemListSchema(products.map((p) => ({ name: p.name, url: `/products/${p.slug}` })))} />
 
   <section class="relative h-[42vh] min-h-[300px] flex items-center justify-center overflow-hidden">
     {collection.image.src && (

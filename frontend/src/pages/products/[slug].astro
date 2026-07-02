@@ -28,12 +28,12 @@ try {
   const res = await fetch(`${API}/api/products/${encodeURIComponent(slug)}/reviews`);
   if (res.ok) reviews = await res.json();
 } catch { /* no reviews */ }
-const canonical = new URL(`/objects/${slug}`, site.url).href;
+const canonical = new URL(`/products/${slug}`, site.url).href;
 const reviewsForLd: ReviewLite[] = reviews.items.map((r) => ({ authorName: r.authorName, rating: r.rating, title: r.title, body: r.body }));
 const crumbs = [
   { name: 'Home', url: '/' },
-  { name: 'Objects', url: '/objects' },
-  { name: product.name, url: `/objects/${slug}` },
+  { name: 'Products', url: '/products' },
+  { name: product.name, url: `/products/${slug}` },
 ];
 const isLimited = product.badges.includes('Limited Edition') || Boolean(product.edition);
 const editionLine = product.edition ? `Edition of ${product.edition.count} · Limited` : product.badges[0] ?? '';
@@ -45,9 +45,9 @@ const si = product.seenInInteriors;
   <JsonLd slot="head" schema={breadcrumbSchema(crumbs)} />
   <div class="wrap pt-8">
     <nav class="text-label-caps uppercase opacity-50 flex flex-wrap gap-2" aria-label="Breadcrumb">
-      <a href="/objects" class="hover:opacity-100 transition-opacity">Objects</a>
+      <a href="/products" class="hover:opacity-100 transition-opacity">Products</a>
       <span aria-hidden="true">/</span>
-      <a href={`/objects?category=${product.category}`} class="hover:opacity-100 transition-opacity">{product.category}</a>
+      <a href={`/products?category=${product.category}`} class="hover:opacity-100 transition-opacity">{product.category}</a>
       <span aria-hidden="true">/</span>
       <span class="text-on-surface opacity-100">{product.name}</span>
     </nav>
@@ -164,7 +164,7 @@ const si = product.seenInInteriors;
         </>
       ) : (
         <p class="text-body-md text-on-surface-variant">
-          <a href={`/account/login?next=/objects/${product.slug}`} class="btn-editorial">Sign in</a> to write a review (available after your order is delivered).
+          <a href={`/account/login?next=/products/${product.slug}`} class="btn-editorial">Sign in</a> to write a review (available after your order is delivered).
         </p>
       )}
     </div>

@@ -15,9 +15,9 @@ const products = await getProducts({ sort: 'newest', onSale });
 const facets = await getFacets();
 ---
 
-<BaseLayout title="Objects" description="Small-batch ceramic works for quiet interiors.">
-  <JsonLd slot="head" schema={breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Objects', url: '/objects' }])} />
-  <JsonLd slot="head" schema={itemListSchema(products.map((p) => ({ name: p.name, url: `/objects/${p.slug}` })))} />
+<BaseLayout title="Products" description="Small-batch ceramic works for quiet interiors.">
+  <JsonLd slot="head" schema={breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Products', url: '/products' }])} />
+  <JsonLd slot="head" schema={itemListSchema(products.map((p) => ({ name: p.name, url: `/products/${p.slug}` })))} />
   <!-- Hero band -->
   <section class="relative h-[42vh] min-h-[300px] flex items-center justify-center overflow-hidden">
     <Img
@@ -30,7 +30,7 @@ const facets = await getFacets();
     />
     <div class="absolute inset-0 bg-surface/35"></div>
     <div class="relative text-center fade-up px-6">
-      <h1 class="font-display text-display-mobile md:text-display-lg">Objects</h1>
+      <h1 class="font-display text-display-mobile md:text-display-lg">Products</h1>
       <p class="text-body-lg text-on-surface-variant mt-3">Small-batch ceramic works for quiet interiors.</p>
     </div>
   </section>
@@ -42,7 +42,7 @@ const facets = await getFacets();
         <button type="button" data-filters-open class="md:hidden inline-flex items-center gap-2 text-label-caps uppercase border border-outline px-4 py-2">
           <Icon name="menu" size={14} /> Filters
         </button>
-        <span class="text-label-caps uppercase opacity-60"><span data-count>{products.length}</span> Objects</span>
+        <span class="text-label-caps uppercase opacity-60"><span data-count>{products.length}</span> Products</span>
       </div>
       <SortControl />
     </div>
@@ -70,7 +70,7 @@ const facets = await getFacets();
         </div>
 
         <p data-empty hidden class="text-body-md text-on-surface-variant py-24 text-center">
-          No objects match these filters.
+          No products match these filters.
         </p>
 
         <LoadMore />

@@ -5,7 +5,7 @@ export interface NavLink {
 
 /** Primary navigation, left of the wordmark on desktop. */
 export const mainNav: NavLink[] = [
-  { label: 'Shop', href: '/objects' },
+  { label: 'Shop', href: '/products' },
   { label: 'Collections', href: '/collections' },
   { label: 'Atelier', href: '/atelier' },
   { label: 'About', href: '/about' },
@@ -16,7 +16,7 @@ export const footerNav: { heading: string; links: NavLink[] }[] = [
   {
     heading: 'Explore',
     links: [
-      { label: 'Shop', href: '/objects' },
+      { label: 'Shop', href: '/products' },
       { label: 'Collections', href: '/collections' },
       { label: 'Atelier', href: '/atelier' },
     ],
@@ -33,7 +33,7 @@ export const footerNav: { heading: string; links: NavLink[] }[] = [
 
 /** Compact link row used in the minimal home/global footer. */
 export const minimalFooterNav: NavLink[] = [
-  { label: 'Shop', href: '/objects' },
+  { label: 'Shop', href: '/products' },
   { label: 'Collections', href: '/collections' },
   { label: 'Atelier', href: '/atelier' },
   { label: 'Contact', href: '/about' },

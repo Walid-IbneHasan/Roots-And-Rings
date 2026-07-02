@@ -19,7 +19,7 @@ const small = await getProduct('tasting-plates-set');
     <!-- Large image -->
     {large && (
       <div class="md:col-span-8 fade-up">
-        <a href={`/objects/${large.slug}`} class="group block">
+        <a href={`/products/${large.slug}`} class="group block">
           <Img
             src={large.images[0].src}
             alt={large.images[0].alt}
@@ -42,7 +42,7 @@ const small = await getProduct('tasting-plates-set');
         “{collection.description}”
       </p>
       {small && (
-        <a href={`/objects/${small.slug}`} class="group block">
+        <a href={`/products/${small.slug}`} class="group block">
           <Img
             src={small.images[0].src}
             alt={small.images[0].alt}

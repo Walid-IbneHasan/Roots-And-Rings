@@ -28,7 +28,7 @@ try {
                 <div class="flex items-center">
                   <span class="text-body-md">{i.name} <span class="opacity-50">× {i.quantity}</span></span>
                   {order.status === 'DELIVERED' && i.slug && (
-                    <a href={`/objects/${i.slug}#reviews`} class="btn-editorial text-label-caps uppercase ml-3">Review this item</a>
+                    <a href={`/products/${i.slug}#reviews`} class="btn-editorial text-label-caps uppercase ml-3">Review this item</a>
                   )}
                 </div>
                 <span class="text-body-md">{formatPrice(i.lineTotal)}</span>

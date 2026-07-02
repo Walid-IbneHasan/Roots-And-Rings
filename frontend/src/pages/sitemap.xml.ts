@@ -3,7 +3,7 @@ import { getProducts, getCollections } from '../lib/catalog';
 import { buildSitemapXml, type SitemapEntry } from '../lib/sitemap';
 import { site } from '../data/site';
 
-const STATIC_PATHS = ['/', '/objects', '/collections', '/about', '/atelier'];
+const STATIC_PATHS = ['/', '/products', '/collections', '/about', '/atelier'];
 
 export const GET: APIRoute = async () => {
   const entries: SitemapEntry[] = STATIC_PATHS.map((p) => ({ loc: new URL(p, site.url).href }));
@@ -11,7 +11,7 @@ export const GET: APIRoute = async () => {
     const products = await getProducts();
     for (const p of products) {
       entries.push({
-        loc: new URL(`/objects/${p.slug}`, site.url).href,
+        loc: new URL(`/products/${p.slug}`, site.url).href,
         lastmod: typeof p.createdAt === 'string' ? p.createdAt.slice(0, 10) : undefined,
       });
     }

@@ -4,7 +4,7 @@ import * as api from './api';
 /**
  * Catalog data-access layer. Signatures are unchanged from the mock-data version, but
  * the bodies now read live data from the Fastify backend via `api.ts`. Components are
- * untouched. (Storefront filtering on /objects stays client-side, so getProducts()
+ * untouched. (Storefront filtering on /products stays client-side, so getProducts()
  * returns the full set.)
  */
 

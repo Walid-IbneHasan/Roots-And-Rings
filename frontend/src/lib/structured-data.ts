@@ -30,7 +30,7 @@ export function websiteSchema() {
     url: site.url,
     potentialAction: {
       '@type': 'SearchAction',
-      target: { '@type': 'EntryPoint', urlTemplate: `${site.url}/objects?q={search_term_string}` },
+      target: { '@type': 'EntryPoint', urlTemplate: `${site.url}/products?q={search_term_string}` },
       'query-input': 'required name=search_term_string',
     },
   };
