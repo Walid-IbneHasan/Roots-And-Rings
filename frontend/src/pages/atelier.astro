@@ -1,11 +1,26 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ComingSoon from '../components/layout/ComingSoon.astro';
+import Img from '../components/ui/Img.astro';
+import Newsletter from '../components/layout/Newsletter.astro';
 ---
-<BaseLayout title="Atelier" description="Inside the Roots & Rings atelier — where the clay remembers the hand.">
-  <ComingSoon
-    eyebrow="The Atelier"
-    title="Where the clay remembers the hand."
-    body="A closer look at the studio, the kiln, and the slow making behind every piece is being prepared."
-  />
+
+<BaseLayout title="Atelier" description="Inside the Roots & Rings atelier — handcrafted clay home décor, made with Bangladeshi artisans.">
+  <section class="relative h-[52vh] min-h-[360px] flex items-center justify-center overflow-hidden">
+    <Img fill src="interior-kura" alt="A quiet clay studio with shelves of drying handmade pottery." priority widths={[768, 1280, 1920]} sizes="100vw" />
+    <div class="absolute inset-0 bg-surface/40"></div>
+    <div class="relative text-center fade-up px-6">
+      <span class="text-label-caps uppercase opacity-60 mb-4 block">The Atelier</span>
+      <h1 class="font-display text-display-mobile md:text-display-lg">Where clay meets the hand.</h1>
+    </div>
+  </section>
+
+  <section class="wrap py-16 md:py-24 max-w-2xl">
+    <div class="space-y-6 text-body-lg text-on-surface-variant fade-up">
+      <p>Roots &amp; Rings began with a simple belief — that the clay traditions of Bangladesh belong in the modern home.</p>
+      <p>We partner with local artisans, potters whose families have worked clay for generations, and bring their craft to a wider audience. Every piece is made in small batches, by hand, with care.</p>
+      <p>This is a growing story. As we work with more makers, our collection of clay home décor grows with them.</p>
+    </div>
+  </section>
+
+  <Newsletter />
 </BaseLayout>

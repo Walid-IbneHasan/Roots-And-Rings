@@ -1,9 +1,9 @@
 export const site = {
   name: 'Roots & Rings',
   shortName: 'R&R',
-  title: 'Roots & Rings — Collectible Ceramics & Home Objects',
+  title: 'Roots & Rings — Handcrafted Clay Home Décor',
   description:
-    'Collectible ceramics and home objects shaped by earth, fire, hand, and time. Small-batch artisan pottery, made in limited editions.',
+    'Handcrafted clay home décor, made with Bangladeshi artisans. Small-batch pottery and decorative pieces for the modern home — an ever-growing collection.',
   tagline: 'Crafted with love, rooted in tradition.',
   url: import.meta.env.PUBLIC_SITE_URL ?? 'https://rootsandrings.net',
   locale: 'en',
