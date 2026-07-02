@@ -1,14 +1,9 @@
-<h1><%= it.cat ? 'Edit' : 'New' %> Category</h1>
-<form class="stack" method="post" action="<%= it.cat ? '/admin/categories/' + it.cat.id + '/edit' : '/admin/categories/new' %>">
+<h1><%= it.cat ? 'Edit' : 'New' %> <%= it.cfg.label %></h1>
+<form class="stack" method="post" action="<%= it.cat ? it.cfg.basePath + '/' + it.cat.id + '/edit' : it.cfg.basePath + '/new' %>">
   <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
-  <label>Kind
-    <select name="kind">
-      <option value="PRODUCT_TYPE" <%= it.cat && it.cat.kind === 'PRODUCT_TYPE' ? 'selected' : '' %>>Product Type</option>
-      <option value="COLLECTION" <%= it.cat && it.cat.kind === 'COLLECTION' ? 'selected' : '' %>>Collection</option>
-    </select>
-  </label>
   <label>Name <input name="name" required value="<%= it.cat ? it.cat.name : '' %>" /></label>
   <label>Slug (optional) <input name="slug" value="<%= it.cat ? it.cat.slug : '' %>" placeholder="auto from name" /></label>
+  <% if (it.cfg.showParent) { %>
   <label>Parent
     <select name="parentId">
       <option value="">— none —</option>
@@ -17,6 +12,7 @@
       <% } }) %>
     </select>
   </label>
+  <% } %>
   <label>Tagline <input name="tagline" value="<%= it.cat && it.cat.tagline ? it.cat.tagline : '' %>" /></label>
   <label>Description <textarea name="description"><%= it.cat && it.cat.description ? it.cat.description : '' %></textarea></label>
   <label>Image
@@ -63,5 +59,5 @@
   </div>
   <label>SEO Title <input name="seoTitle" value="<%= it.cat && it.cat.seoTitle ? it.cat.seoTitle : '' %>" /></label>
   <label>SEO Description <textarea name="seoDescription"><%= it.cat && it.cat.seoDescription ? it.cat.seoDescription : '' %></textarea></label>
-  <div class="actions"><button class="btn" type="submit">Save</button><a class="btn ghost" href="/admin/categories">Cancel</a></div>
+  <div class="actions"><button class="btn" type="submit">Save</button><a class="btn ghost" href="<%= it.cfg.basePath %>">Cancel</a></div>
 </form>

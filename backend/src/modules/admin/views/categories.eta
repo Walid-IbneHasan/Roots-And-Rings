@@ -1,20 +1,20 @@
 <div class="toolbar">
-  <div><h1>Categories</h1><p class="sub">Product types &amp; collections.</p></div>
-  <a class="btn" href="/admin/categories/new">New Category</a>
+  <div><h1><%= it.cfg.heading %></h1><p class="sub"><%= it.cfg.sub %></p></div>
+  <a class="btn" href="<%= it.cfg.basePath %>/new"><%= it.cfg.newLabel %></a>
 </div>
 <table>
-  <thead><tr><th>Name</th><th>Kind</th><th>Slug</th><th>Products</th><th>Active</th><th></th></tr></thead>
+  <thead><tr><th>Name</th><th>Slug</th><th>Products</th><th>Active</th><th></th></tr></thead>
   <tbody>
+    <% if (!it.cats.length) { %><tr><td colspan="5" class="muted">None yet.</td></tr><% } %>
     <% it.cats.forEach(function (c) { %>
       <tr>
         <td><%= c.name %></td>
-        <td><span class="pill"><%= c.kind === 'PRODUCT_TYPE' ? 'Type' : 'Collection' %></span></td>
         <td class="muted"><%= c.slug %></td>
-        <td><%= c._count.typeProducts + c._count.collectionProducts %></td>
+        <td><%= c._count[it.cfg.countField] %></td>
         <td><%= c.isActive ? 'Yes' : 'No' %></td>
         <td style="text-align:right;white-space:nowrap">
-          <a class="btn ghost sm" href="/admin/categories/<%= c.id %>/edit">Edit</a>
-          <form method="post" action="/admin/categories/<%= c.id %>/delete" style="display:inline" onsubmit="return confirm('Delete this category?')">
+          <a class="btn ghost sm" href="<%= it.cfg.basePath %>/<%= c.id %>/edit">Edit</a>
+          <form method="post" action="<%= it.cfg.basePath %>/<%= c.id %>/delete" style="display:inline" onsubmit="return confirm('Delete this <%= it.cfg.label.toLowerCase() %>?')">
             <input type="hidden" name="_csrf" value="<%= it.csrf %>" />
             <button class="btn danger sm" type="submit">Delete</button>
           </form>

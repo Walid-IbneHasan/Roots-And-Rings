@@ -65,6 +65,7 @@
       <a href="/admin/coupons" class="<%= it.active==='coupons'?'active':'' %>">Coupons</a>
       <a href="/admin/reviews" class="<%= it.active==='reviews'?'active':'' %>">Reviews</a>
       <a href="/admin/categories" class="<%= it.active==='categories'?'active':'' %>">Categories</a>
+      <a href="/admin/collections" class="<%= it.active==='collections'?'active':'' %>">Collections</a>
       <a href="/admin/team" class="<%= it.active==='team'?'active':'' %>">Team</a>
       <a href="<%= it.storefront || 'http://localhost:4321' %>" target="_blank">View Site ↗</a>
     </nav>

@@ -29,9 +29,8 @@ describe('admin categories CRUD', () => {
   });
 
   it('creates, lists, and deletes a category (and reflects in public API)', async () => {
-    const token = await csrfFrom(app, '/admin/categories/new', cookie);
-    const create = await formPost(app, '/admin/categories/new', cookie, token, {
-      kind: 'COLLECTION',
+    const token = await csrfFrom(app, '/admin/collections/new', cookie);
+    const create = await formPost(app, '/admin/collections/new', cookie, token, {
       name: 'Test Collection ZZ',
       tagline: 'A temporary test collection',
       isActive: 'on',
@@ -45,14 +44,14 @@ describe('admin categories CRUD', () => {
     expect(made).toBeTruthy();
 
     // appears in admin list
-    const list = await app.inject({ method: 'GET', url: '/admin/categories', headers: { cookie } });
+    const list = await app.inject({ method: 'GET', url: '/admin/collections', headers: { cookie } });
     expect(list.body).toContain('Test Collection ZZ');
 
     // find its id, delete it
     const cat = await app.prisma.category.findUnique({ where: { slug: 'test-collection-zz' } });
     expect(cat).toBeTruthy();
-    const delToken = await csrfFrom(app, '/admin/categories', cookie);
-    const del = await formPost(app, `/admin/categories/${cat!.id}/delete`, cookie, delToken, {});
+    const delToken = await csrfFrom(app, '/admin/collections', cookie);
+    const del = await formPost(app, `/admin/collections/${cat!.id}/delete`, cookie, delToken, {});
     expect(del.statusCode).toBe(302);
     expect(await app.prisma.category.findUnique({ where: { slug: 'test-collection-zz' } })).toBeNull();
   });
