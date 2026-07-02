@@ -71,7 +71,7 @@ model Product {
   subtitle         String?
   shortDescription String    @db.Text
   description      String    @db.Text
-  clayBody         String?
+  bodyType         String?
   badges           Json      @default("[]")
   basePrice        Decimal   @db.Decimal(12, 2)
   salePrice        Decimal?  @db.Decimal(12, 2)

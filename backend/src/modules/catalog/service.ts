@@ -5,7 +5,7 @@ import type { ProductsQuery } from './schemas';
 const include = { category: true, images: true, collections: true, variants: true } satisfies Prisma.ProductInclude;
 
 const PRODUCT_TYPE_ORDER = ['Vessels', 'Bowls', 'Plates', 'Sculptural', 'Tableware'];
-const CLAY_BODY_ORDER = ['Stoneware', 'Porcelain', 'Earthenware'];
+const BODY_TYPE_ORDER = ['Stoneware', 'Porcelain', 'Earthenware'];
 const BADGE_ORDER = ['Limited Edition', 'Made to Order'];
 
 function sortToOrderBy(sort: ProductsQuery['sort']): Prisma.ProductOrderByWithRelationInput {
@@ -41,27 +41,27 @@ export interface ProductListResult {
 
 export interface Facets {
   categories: string[];
-  clayBodies: string[];
+  bodyTypes: string[];
   attributes: string[];
 }
 
 export async function getFacets(prisma: PrismaClient): Promise<Facets> {
   const products = await prisma.product.findMany({
     where: { isActive: true },
-    select: { clayBody: true, badges: true, category: { select: { name: true } } },
+    select: { bodyType: true, badges: true, category: { select: { name: true } } },
   });
   const cats = new Set<string>();
   const clays = new Set<string>();
   const attrs = new Set<string>();
   for (const p of products) {
     if (p.category?.name) cats.add(p.category.name);
-    if (p.clayBody) clays.add(p.clayBody);
+    if (p.bodyType) clays.add(p.bodyType);
     if (Array.isArray(p.badges)) for (const b of p.badges as string[]) attrs.add(b);
   }
   const order = (set: Set<string>, ref: string[]) => ref.filter((x) => set.has(x)).concat([...set].filter((x) => !ref.includes(x)));
   return {
     categories: order(cats, PRODUCT_TYPE_ORDER),
-    clayBodies: order(clays, CLAY_BODY_ORDER),
+    bodyTypes: order(clays, BODY_TYPE_ORDER),
     attributes: order(attrs, BADGE_ORDER),
   };
 }
@@ -70,7 +70,7 @@ export async function listProducts(prisma: PrismaClient, q: ProductsQuery): Prom
   const now = new Date();
   const where: Prisma.ProductWhereInput = { isActive: true };
   if (q.category) where.category = { slug: q.category };
-  if (q.clayBody) where.clayBody = q.clayBody;
+  if (q.bodyType) where.bodyType = q.bodyType;
   if (q.minPrice != null || q.maxPrice != null) {
     where.basePrice = {};
     if (q.minPrice != null) (where.basePrice as Prisma.DecimalFilter).gte = q.minPrice;

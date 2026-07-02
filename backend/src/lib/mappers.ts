@@ -49,7 +49,7 @@ export interface ProductDTO {
   currency: string;
   category: RefDTO | null;
   categoryName: string | null;
-  clayBody: string | null;
+  bodyType: string | null;
   badges: string[];
   shortDescription: string;
   description: string;
@@ -114,7 +114,7 @@ export function mapProduct(p: ProductWithRelations, now: Date = new Date()): Pro
     currency: resolved.currency,
     category: p.category ? { slug: p.category.slug, name: p.category.name } : null,
     categoryName: p.category?.name ?? null,
-    clayBody: p.clayBody ?? null,
+    bodyType: p.bodyType ?? null,
     badges: Array.isArray(p.badges) ? (p.badges as string[]) : [],
     shortDescription: p.shortDescription,
     description: p.description,

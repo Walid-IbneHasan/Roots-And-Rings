@@ -71,7 +71,7 @@ node node_modules/vitest/vitest.mjs run    # 59 tests (needs the Docker DB runni
 ## Public API
 
 `GET /api/health · /api/categories[?kind] · /api/categories/:slug · /api/collections ·
-/api/collections/:slug · /api/products[?category,clayBody,attribute,minPrice,maxPrice,onSale,sort,q,page,pageSize] ·
+/api/collections/:slug · /api/products[?category,bodyType,attribute,minPrice,maxPrice,onSale,sort,q,page,pageSize] ·
 /api/products/:slug · /api/products/:slug/related · /api/featured · /api/facets`
 (OpenAPI at `/docs`). Prices resolve **flash → sale → base** at read time.
 

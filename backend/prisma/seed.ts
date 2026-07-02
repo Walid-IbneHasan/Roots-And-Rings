@@ -144,7 +144,7 @@ async function main() {
       subtitle: p.subtitle ?? null,
       shortDescription: p.shortDescription,
       description: p.description,
-      clayBody: p.clayBody ?? null,
+      bodyType: p.clayBody ?? null,
       badges: p.badges ?? [],
       basePrice: p.price,
       currency: 'BDT',

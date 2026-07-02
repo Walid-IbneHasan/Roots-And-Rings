@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const productsQuery = z.object({
   category: z.string().optional(),
-  clayBody: z.string().optional(),
+  bodyType: z.string().optional(),
   attribute: z.string().optional(),
   minPrice: z.coerce.number().optional(),
   maxPrice: z.coerce.number().optional(),

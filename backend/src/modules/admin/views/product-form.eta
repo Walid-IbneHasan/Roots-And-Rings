@@ -26,7 +26,7 @@
         <% }) %>
       </select>
     </label>
-    <label>Clay body <input name="clayBody" value="<%= p && p.clayBody ? p.clayBody : '' %>" placeholder="Stoneware / Porcelain / Earthenware" /></label>
+    <label>Body Type <input name="bodyType" value="<%= p && p.bodyType ? p.bodyType : '' %>" placeholder="Stoneware / Terracotta / …" /></label>
   </div>
 
   <label>Collections
@@ -69,11 +69,7 @@
       <label>Dimensions <input name="specDimensions" value="<%= specs.dimensions || '' %>" /></label>
       <label>Weight <input name="specWeight" value="<%= specs.weight || '' %>" /></label>
     </div>
-    <div class="grid2">
-      <label>Clay body <input name="specClayBody" value="<%= specs.clayBody || '' %>" /></label>
-      <label>Glaze <input name="specGlaze" value="<%= specs.glaze || '' %>" /></label>
-    </div>
-    <label>Firing <input name="specFiring" value="<%= specs.firing || '' %>" /></label>
+    <label>Body Type <input name="specBodyType" value="<%= specs.bodyType || '' %>" /></label>
   </fieldset>
 
   <div class="grid2">

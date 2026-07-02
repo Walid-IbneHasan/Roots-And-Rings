@@ -21,7 +21,7 @@ describe('GET /api/products', () => {
     expect(body.total).toBeGreaterThanOrEqual(16);
     expect(body.items.length).toBeGreaterThanOrEqual(16);
     expect(body.facets.categories).toContain('Vessels');
-    expect(body.facets.clayBodies).toContain('Porcelain');
+    expect(body.facets.bodyTypes).toContain('Porcelain');
     expect(body.facets.attributes).toContain('Limited Edition');
   });
 
