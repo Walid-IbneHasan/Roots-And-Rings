@@ -8,7 +8,7 @@ import { itemListSchema, breadcrumbSchema } from '../../lib/structured-data';
 
 const { slug } = Astro.params;
 const collection = slug ? await getCollection(slug) : undefined;
-if (!collection) return new Response('Not found', { status: 404 });
+if (!collection) return Astro.redirect('/404');
 const products = await getCollectionProducts(slug!);
 const categories = [...new Set(products.map((p) => p.category).filter(Boolean))].sort();
 ---
