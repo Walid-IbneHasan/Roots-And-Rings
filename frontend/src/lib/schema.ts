@@ -8,19 +8,17 @@ export const imageRefSchema = z.object({
 export type ImageRef = z.infer<typeof imageRefSchema>;
 
 export const CATEGORIES = ['Vessels', 'Bowls', 'Plates', 'Sculptural', 'Tableware'] as const;
-export const CLAY_BODIES = ['Stoneware', 'Porcelain', 'Earthenware'] as const;
+export const BODY_TYPES = ['Stoneware', 'Porcelain', 'Earthenware'] as const;
 export const BADGES = ['Limited Edition', 'Made to Order'] as const;
 
 export type Category = (typeof CATEGORIES)[number];
-export type ClayBody = (typeof CLAY_BODIES)[number];
+export type BodyType = (typeof BODY_TYPES)[number];
 export type Badge = (typeof BADGES)[number];
 
 export const specsSchema = z.object({
   dimensions: z.string().min(1),
   weight: z.string().min(1),
-  clayBody: z.string().min(1),
-  firing: z.string().min(1),
-  glaze: z.string().min(1),
+  bodyType: z.string().min(1),
 });
 export type Specs = z.infer<typeof specsSchema>;
 
@@ -51,7 +49,7 @@ export const productSchema = z.object({
   isOnFlash: z.boolean().default(false),
   currency: z.string().default('BDT'),
   category: z.string().default(''),
-  clayBody: z.string().default(''),
+  bodyType: z.string().default(''),
   badges: z.array(z.string()).default([]),
   shortDescription: z.string().min(1),
   description: z.string().min(1),

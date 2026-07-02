@@ -12,7 +12,7 @@ export type SortKey = 'newest' | 'price-asc' | 'price-desc';
 
 export interface ProductQuery {
   categories?: string[];
-  clayBodies?: string[];
+  bodyTypes?: string[];
   attributes?: string[];
   onSale?: boolean;
   sort?: SortKey;
@@ -32,11 +32,11 @@ function sortProducts(list: Product[], sort: SortKey): Product[] {
 }
 
 export async function getProducts(query: ProductQuery = {}): Promise<Product[]> {
-  const { categories, clayBodies, attributes, onSale, sort = 'newest' } = query;
+  const { categories, bodyTypes, attributes, onSale, sort = 'newest' } = query;
   let list = await api.fetchProducts();
 
   if (categories?.length) list = list.filter((p) => categories.includes(p.category));
-  if (clayBodies?.length) list = list.filter((p) => clayBodies.includes(p.clayBody));
+  if (bodyTypes?.length) list = list.filter((p) => bodyTypes.includes(p.bodyType));
   if (attributes?.length) list = list.filter((p) => attributes.some((a) => p.badges.includes(a)));
   if (onSale) list = list.filter((p) => p.isOnSale || p.isOnFlash);
 
@@ -77,7 +77,7 @@ export async function getCollectionProducts(slug: string): Promise<Product[]> {
 
 export interface Facets {
   categories: string[];
-  clayBodies: string[];
+  bodyTypes: string[];
   attributes: string[];
 }
 

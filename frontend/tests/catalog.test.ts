@@ -21,8 +21,8 @@ describe('getProducts', () => {
   });
 
   it('filters by clay body', async () => {
-    const porcelain = await getProducts({ clayBodies: ['Porcelain'] });
-    expect(porcelain.every((p) => p.clayBody === 'Porcelain')).toBe(true);
+    const porcelain = await getProducts({ bodyTypes: ['Porcelain'] });
+    expect(porcelain.every((p) => p.bodyType === 'Porcelain')).toBe(true);
   });
 
   it('filters by attribute badge', async () => {
@@ -50,8 +50,8 @@ describe('getProducts', () => {
   });
 
   it('combines category and clay body filters', async () => {
-    const r = await getProducts({ categories: ['Bowls'], clayBodies: ['Earthenware'] });
-    expect(r.every((p) => p.category === 'Bowls' && p.clayBody === 'Earthenware')).toBe(true);
+    const r = await getProducts({ categories: ['Bowls'], bodyTypes: ['Earthenware'] });
+    expect(r.every((p) => p.category === 'Bowls' && p.bodyType === 'Earthenware')).toBe(true);
   });
 });
 
@@ -98,7 +98,7 @@ describe('getFacets', () => {
   it('returns the facet values present in the catalogue', async () => {
     const facets = await getFacets();
     expect(facets.categories).toContain('Vessels');
-    expect(facets.clayBodies).toContain('Porcelain');
+    expect(facets.bodyTypes).toContain('Porcelain');
     expect(facets.attributes).toContain('Limited Edition');
   });
 });

@@ -4,7 +4,7 @@ import type { Product } from '../src/lib/schema';
 
 const baseProduct = {
   slug: 'kura-vessel', name: 'Kura Vessel', subtitle: 'Stoneware', price: 800, currency: 'BDT',
-  category: 'vessels', clayBody: 'stoneware', badges: [], shortDescription: 'A quiet vessel.',
+  category: 'vessels', bodyType: 'stoneware', badges: [], shortDescription: 'A quiet vessel.',
   description: 'desc', curatorsNote: 'note', specs: {}, images: [{ src: 'https://cdn.x/kura.webp', alt: 'Kura' }],
   relatedSlugs: [], createdAt: '2026-06-01T00:00:00.000Z', ratingAvg: null, ratingCount: 0,
 } as unknown as Product;

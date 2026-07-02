@@ -130,7 +130,7 @@ async function main() {
       collectionSlugs.add('the-first-firing');
     }
     if (['Tableware', 'Plates', 'Bowls'].includes(p.category)) collectionSlugs.add('quiet-table');
-    if (p.clayBody === 'Porcelain') collectionSlugs.add('porcelain-light');
+    if (p.bodyType === 'Porcelain') collectionSlugs.add('porcelain-light');
     const collectionIds = [...collectionSlugs]
       .map((s) => collectionIdBySlug.get(s))
       .filter((x): x is string => Boolean(x))
@@ -144,7 +144,7 @@ async function main() {
       subtitle: p.subtitle ?? null,
       shortDescription: p.shortDescription,
       description: p.description,
-      bodyType: p.clayBody ?? null,
+      bodyType: p.bodyType ?? null,
       badges: p.badges ?? [],
       basePrice: p.price,
       currency: 'BDT',

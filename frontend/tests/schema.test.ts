@@ -8,7 +8,7 @@ const base = {
   price: 420,
   currency: 'EUR',
   category: 'Vessels',
-  clayBody: 'Stoneware',
+  bodyType: 'Stoneware',
   badges: ['Limited Edition'],
   shortDescription: 'A silent custodian of space.',
   description: 'Emerging from the intersection of architectural brutalism and organic decay.',
@@ -16,9 +16,7 @@ const base = {
   specs: {
     dimensions: 'H 42cm × W 28cm × D 25cm',
     weight: '4.2 kg',
-    clayBody: 'High-iron dark stoneware with grog',
-    firing: 'Anagama wood-fired for 72 hours',
-    glaze: 'Celadon mist ash glaze',
+    bodyType: 'High-iron dark stoneware with grog',
   },
   images: [{ src: 'the-kura-vessel-1', alt: 'A textured ceramic vessel on a stone plinth.' }],
   relatedSlugs: ['tea-bowl-no-14'],
@@ -39,7 +37,7 @@ describe('productSchema', () => {
   });
 
   it('accepts any category/clay-body string (relaxed for live API data)', () => {
-    expect(productSchema.parse({ ...base, category: 'Vessels', clayBody: 'Stoneware' }).category).toBe('Vessels');
+    expect(productSchema.parse({ ...base, category: 'Vessels', bodyType: 'Stoneware' }).category).toBe('Vessels');
   });
 
   it('rejects an empty images array', () => {

@@ -1,7 +1,7 @@
 import { $ui, setFilters } from '../lib/stores';
 
 /**
- * Client-side catalog: filter (category / clay body / attribute), sort, and progressive
+ * Client-side catalog: filter (category / body type / attribute), sort, and progressive
  * "Load More" over server-rendered product cells. Also drives the mobile filter drawer.
  */
 const PAGE_SIZE = 9;
@@ -29,10 +29,10 @@ function init(): void {
 
   function matches(cell: HTMLElement): boolean {
     const cats = selected('category');
-    const clays = selected('clayBody');
+    const bodyTypes = selected('bodyType');
     const attrs = selected('attribute');
     if (cats.length && !cats.includes(cell.dataset.category ?? '')) return false;
-    if (clays.length && !clays.includes(cell.dataset.clay ?? '')) return false;
+    if (bodyTypes.length && !bodyTypes.includes(cell.dataset.bodytype ?? '')) return false;
     if (attrs.length) {
       const badges = (cell.dataset.badges ?? '').split('|');
       if (!attrs.some((a) => badges.includes(a))) return false;

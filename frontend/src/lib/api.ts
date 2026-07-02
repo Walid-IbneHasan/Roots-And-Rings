@@ -21,7 +21,7 @@ interface ApiProduct {
   currency: string;
   category: { slug: string; name: string } | null;
   categoryName: string | null;
-  clayBody: string | null;
+  bodyType: string | null;
   badges: string[];
   shortDescription: string;
   description: string;
@@ -55,7 +55,7 @@ function toProduct(p: ApiProduct): Product {
     price: p.price,
     currency: p.currency,
     category: p.categoryName ?? p.category?.name ?? '',
-    clayBody: p.clayBody ?? '',
+    bodyType: p.bodyType ?? '',
     badges: p.badges ?? [],
     shortDescription: p.shortDescription,
     description: p.description,
@@ -111,11 +111,11 @@ export async function fetchCollections(): Promise<Collection[]> {
 export async function fetchCollectionProducts(slug: string): Promise<Product[]> {
   return ((await getJson<ApiProduct[]>(`/api/collections/${encodeURIComponent(slug)}/products`)) ?? []).map(toProduct);
 }
-export async function fetchFacets(): Promise<{ categories: string[]; clayBodies: string[]; attributes: string[] }> {
+export async function fetchFacets(): Promise<{ categories: string[]; bodyTypes: string[]; attributes: string[] }> {
   return (
-    (await getJson<{ categories: string[]; clayBodies: string[]; attributes: string[] }>('/api/facets')) ?? {
+    (await getJson<{ categories: string[]; bodyTypes: string[]; attributes: string[] }>('/api/facets')) ?? {
       categories: [],
-      clayBodies: [],
+      bodyTypes: [],
       attributes: [],
     }
   );

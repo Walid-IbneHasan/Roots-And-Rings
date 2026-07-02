@@ -11,9 +11,7 @@ const rows: { label: string; value: string }[] = [
   ...(edition ? [{ label: 'Edition', value: `${edition.count} pieces globally` }] : []),
   { label: 'Dimensions', value: specs.dimensions },
   { label: 'Weight', value: specs.weight },
-  { label: 'Clay Body', value: specs.clayBody },
-  { label: 'Glaze', value: specs.glaze },
-  { label: 'Firing', value: specs.firing },
+  { label: 'Body Type', value: specs.bodyType },
 ];
 ---
 

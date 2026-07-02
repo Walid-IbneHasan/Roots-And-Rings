@@ -7,9 +7,9 @@ interface Props {
 }
 const { facets } = Astro.props;
 
-const groups: { key: 'category' | 'clayBody' | 'attribute'; heading: string; values: string[] }[] = [
+const groups: { key: 'category' | 'bodyType' | 'attribute'; heading: string; values: string[] }[] = [
   { key: 'category', heading: 'Category', values: facets.categories },
-  { key: 'clayBody', heading: 'Clay Body', values: facets.clayBodies },
+  { key: 'bodyType', heading: 'Body Type', values: facets.bodyTypes },
   { key: 'attribute', heading: 'Attributes', values: facets.attributes },
 ];
 ---

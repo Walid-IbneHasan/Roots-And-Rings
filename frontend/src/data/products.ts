@@ -16,7 +16,7 @@ const raw = [
     price: 420,
     currency: 'EUR',
     category: 'Vessels',
-    clayBody: 'Stoneware',
+    bodyType: 'Stoneware',
     badges: ['Limited Edition'],
     shortDescription: 'A silent custodian of space, hand-coiled from custom grogged clay.',
     description:
@@ -26,9 +26,7 @@ const raw = [
     specs: {
       dimensions: 'H 42cm × W 28cm × D 25cm',
       weight: '4.2 kg',
-      clayBody: 'High-iron dark stoneware with grog',
-      firing: 'Anagama wood-fired for 72 hours',
-      glaze: 'Natural ash glaze, unglazed interior',
+      bodyType: 'High-iron dark stoneware with grog',
     },
     edition: { ref: 'AR-04', count: 40, certificate: true, leadTime: 'Made to order · Ships in 3–5 weeks' },
     images: [
@@ -51,7 +49,7 @@ const raw = [
     price: 480,
     currency: 'EUR',
     category: 'Vessels',
-    clayBody: 'Stoneware',
+    bodyType: 'Stoneware',
     badges: ['Limited Edition'],
     shortDescription: 'A meditation on raw materials and the unpredictable path of the flame.',
     description:
@@ -61,9 +59,7 @@ const raw = [
     specs: {
       dimensions: 'H 36cm × W 24cm × D 24cm',
       weight: '3.6 kg',
-      clayBody: 'Grogged stoneware',
-      firing: 'Wood-fired, single firing',
-      glaze: 'Self-glazing wood ash',
+      bodyType: 'Grogged stoneware',
     },
     edition: { ref: 'AR-01', count: 25, certificate: true },
     images: [
@@ -81,7 +77,7 @@ const raw = [
     price: 320,
     currency: 'EUR',
     category: 'Bowls',
-    clayBody: 'Stoneware',
+    bodyType: 'Stoneware',
     badges: [],
     shortDescription: 'A wide, low basin with a torn, lunar rim.',
     description:
@@ -91,9 +87,7 @@ const raw = [
     specs: {
       dimensions: 'H 12cm × Ø 34cm',
       weight: '2.1 kg',
-      clayBody: 'Dark stoneware',
-      firing: 'Reduction-fired to cone 10',
-      glaze: 'Matte charcoal glaze, raw rim',
+      bodyType: 'Dark stoneware',
     },
     images: [
       { src: 'tsuki-basin-1', alt: 'A dark charcoal stoneware basin with a torn rim on pale wood.' },
@@ -109,7 +103,7 @@ const raw = [
     price: 850,
     currency: 'EUR',
     category: 'Sculptural',
-    clayBody: 'Stoneware',
+    bodyType: 'Stoneware',
     badges: ['Made to Order'],
     shortDescription: 'A continuous coil of terracotta describing a single, unbroken gesture.',
     description:
@@ -119,9 +113,7 @@ const raw = [
     specs: {
       dimensions: 'H 38cm × W 40cm × D 18cm',
       weight: '5.4 kg',
-      clayBody: 'Iron-rich stoneware',
-      firing: 'Oxidation-fired to cone 6',
-      glaze: 'Burnished terra slip, unglazed',
+      bodyType: 'Iron-rich stoneware',
     },
     images: [
       { src: 'enso-rings-1', alt: 'A looping terracotta sculptural form on a white plinth.' },
@@ -137,7 +129,7 @@ const raw = [
     price: 240,
     currency: 'EUR',
     category: 'Plates',
-    clayBody: 'Earthenware',
+    bodyType: 'Earthenware',
     badges: [],
     shortDescription: 'Three small, irregular plates for slow, considered meals.',
     description:
@@ -147,9 +139,7 @@ const raw = [
     specs: {
       dimensions: 'Ø 14cm, 16cm, 18cm',
       weight: '1.3 kg (set)',
-      clayBody: 'Buff earthenware',
-      firing: 'Oxidation-fired to cone 04',
-      glaze: 'Bone matte, raw foot',
+      bodyType: 'Buff earthenware',
     },
     images: [
       { src: 'tasting-plates-set-1', alt: 'Three small irregular ceramic plates on neutral linen.' },
@@ -166,7 +156,7 @@ const raw = [
     price: 190,
     currency: 'EUR',
     category: 'Bowls',
-    clayBody: 'Stoneware',
+    bodyType: 'Stoneware',
     badges: [],
     shortDescription: 'A faceted chawan sized to be cradled in two hands.',
     description:
@@ -176,9 +166,7 @@ const raw = [
     specs: {
       dimensions: 'H 8cm × Ø 12cm',
       weight: '0.4 kg',
-      clayBody: 'Speckled stoneware',
-      firing: 'Reduction-fired to cone 10',
-      glaze: 'Tenmoku over faceted body',
+      bodyType: 'Speckled stoneware',
     },
     images: [
       { src: 'tea-bowl-no-14-1', alt: 'A small dark faceted tea bowl on a neutral surface.' },
@@ -193,7 +181,7 @@ const raw = [
     price: 85,
     currency: 'EUR',
     category: 'Vessels',
-    clayBody: 'Earthenware',
+    bodyType: 'Earthenware',
     badges: [],
     shortDescription: 'A small lidded censer with a hand-pierced canopy.',
     description:
@@ -203,9 +191,7 @@ const raw = [
     specs: {
       dimensions: 'H 9cm × Ø 10cm',
       weight: '0.3 kg',
-      clayBody: 'Red earthenware',
-      firing: 'Oxidation-fired to cone 04',
-      glaze: 'Unglazed exterior, sealed well',
+      bodyType: 'Red earthenware',
     },
     images: [
       { src: 'ash-incense-burner-1', alt: 'A small domed ceramic incense burner with pierced lid.' },
@@ -220,7 +206,7 @@ const raw = [
     price: 260,
     currency: 'EUR',
     category: 'Tableware',
-    clayBody: 'Porcelain',
+    bodyType: 'Porcelain',
     badges: ['Made to Order'],
     shortDescription: 'A tall porcelain pourer with a drawn, dripping shoulder glaze.',
     description:
@@ -230,9 +216,7 @@ const raw = [
     specs: {
       dimensions: 'H 26cm × W 12cm × D 11cm',
       weight: '0.9 kg',
-      clayBody: 'Limoges porcelain',
-      firing: 'Reduction-fired to cone 10',
-      glaze: 'Celadon over raw clay shoulder',
+      bodyType: 'Limoges porcelain',
     },
     images: [
       { src: 'the-slender-pitcher-1', alt: 'A tall pitcher with celadon glaze dripping over raw clay.' },
@@ -248,7 +232,7 @@ const raw = [
     price: 310,
     currency: 'EUR',
     category: 'Plates',
-    clayBody: 'Stoneware',
+    bodyType: 'Stoneware',
     badges: [],
     shortDescription: 'A wide, weighty platter with a single concentric throwing ring.',
     description:
@@ -258,9 +242,7 @@ const raw = [
     specs: {
       dimensions: 'H 4cm × Ø 36cm',
       weight: '2.8 kg',
-      clayBody: 'Dark stoneware',
-      firing: 'Reduction-fired to cone 10',
-      glaze: 'Slate matte, raw foot',
+      bodyType: 'Dark stoneware',
     },
     images: [
       { src: 'monolith-platter-1', alt: 'A wide dark stoneware platter seen from above.' },
@@ -276,7 +258,7 @@ const raw = [
     price: 180,
     currency: 'EUR',
     category: 'Tableware',
-    clayBody: 'Porcelain',
+    bodyType: 'Porcelain',
     badges: [],
     shortDescription: 'A bedside carafe in translucent porcelain with a cup that caps it.',
     description:
@@ -286,9 +268,7 @@ const raw = [
     specs: {
       dimensions: 'Carafe H 20cm · Cup H 8cm',
       weight: '0.7 kg (set)',
-      clayBody: 'Translucent porcelain',
-      firing: 'Oxidation-fired to cone 6',
-      glaze: 'Clear satin',
+      bodyType: 'Translucent porcelain',
     },
     images: [
       { src: 'lunar-carafe-1', alt: 'A slender white porcelain carafe with an inverted cup lid.' },
@@ -303,7 +283,7 @@ const raw = [
     price: 140,
     currency: 'EUR',
     category: 'Tableware',
-    clayBody: 'Porcelain',
+    bodyType: 'Porcelain',
     badges: [],
     shortDescription: 'Four small porcelain cups under a soft, snow-white crackle.',
     description:
@@ -313,9 +293,7 @@ const raw = [
     specs: {
       dimensions: 'H 6cm × Ø 7cm (each)',
       weight: '0.6 kg (set)',
-      clayBody: 'Porcelain',
-      firing: 'Oxidation-fired to cone 6',
-      glaze: 'Snow crackle',
+      bodyType: 'Porcelain',
     },
     images: [
       { src: 'snow-glaze-cup-set-1', alt: 'Four small white porcelain cups, lightly crackled.' },
@@ -330,7 +308,7 @@ const raw = [
     price: 120,
     currency: 'EUR',
     category: 'Vessels',
-    clayBody: 'Porcelain',
+    bodyType: 'Porcelain',
     badges: [],
     shortDescription: 'A single-stem vase, thin enough to read the light through.',
     description:
@@ -340,9 +318,7 @@ const raw = [
     specs: {
       dimensions: 'H 16cm × Ø 6cm',
       weight: '0.3 kg',
-      clayBody: 'Translucent porcelain',
-      firing: 'Oxidation-fired to cone 6',
-      glaze: 'Clear, unglazed rim',
+      bodyType: 'Translucent porcelain',
     },
     images: [
       { src: 'veil-bud-vase-1', alt: 'A slim white porcelain bud vase holding a single stem.' },
@@ -357,7 +333,7 @@ const raw = [
     price: 220,
     currency: 'EUR',
     category: 'Vessels',
-    clayBody: 'Earthenware',
+    bodyType: 'Earthenware',
     badges: [],
     shortDescription: 'A footed earthenware planter that breathes with the soil.',
     description:
@@ -367,9 +343,7 @@ const raw = [
     specs: {
       dimensions: 'H 22cm × Ø 24cm',
       weight: '2.4 kg',
-      clayBody: 'Red earthenware',
-      firing: 'Oxidation-fired to cone 04',
-      glaze: 'Unglazed body, sealed interior',
+      bodyType: 'Red earthenware',
     },
     images: [
       { src: 'terra-planter-1', alt: 'A round terracotta planter with a low foot.' },
@@ -384,7 +358,7 @@ const raw = [
     price: 165,
     currency: 'EUR',
     category: 'Bowls',
-    clayBody: 'Earthenware',
+    bodyType: 'Earthenware',
     badges: [],
     shortDescription: 'A warm, generous bowl glazed the colour of dusk.',
     description:
@@ -394,9 +368,7 @@ const raw = [
     specs: {
       dimensions: 'H 10cm × Ø 28cm',
       weight: '1.6 kg',
-      clayBody: 'Buff earthenware',
-      firing: 'Oxidation-fired to cone 04',
-      glaze: 'Sienna gloss, pooling well',
+      bodyType: 'Buff earthenware',
     },
     images: [
       { src: 'sienna-serving-bowl-1', alt: 'A warm sienna-glazed earthenware serving bowl.' },
@@ -411,7 +383,7 @@ const raw = [
     price: 690,
     currency: 'EUR',
     category: 'Sculptural',
-    clayBody: 'Stoneware',
+    bodyType: 'Stoneware',
     badges: ['Limited Edition'],
     shortDescription: 'A balanced stack of hollow stones marking a quiet path.',
     description:
@@ -421,9 +393,7 @@ const raw = [
     specs: {
       dimensions: 'H 52cm × Ø 22cm (assembled)',
       weight: '7.1 kg',
-      clayBody: 'Grogged stoneware',
-      firing: 'Reduction-fired to cone 10',
-      glaze: 'Dry granite matte',
+      bodyType: 'Grogged stoneware',
     },
     edition: { ref: 'AR-07', count: 15, certificate: true, leadTime: 'Made to order · Ships in 4–6 weeks' },
     images: [
@@ -440,7 +410,7 @@ const raw = [
     price: 130,
     currency: 'EUR',
     category: 'Plates',
-    clayBody: 'Porcelain',
+    bodyType: 'Porcelain',
     badges: [],
     shortDescription: 'Two porcelain plates with a soft, drifting blue brushstroke.',
     description:
@@ -450,9 +420,7 @@ const raw = [
     specs: {
       dimensions: 'Ø 26cm (each)',
       weight: '1.1 kg (pair)',
-      clayBody: 'Porcelain',
-      firing: 'Oxidation-fired to cone 6',
-      glaze: 'Clear over cobalt brushwork',
+      bodyType: 'Porcelain',
     },
     images: [
       { src: 'drift-plate-pair-1', alt: 'Two white porcelain plates with soft blue brushstrokes.' },
