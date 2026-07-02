@@ -108,6 +108,9 @@ export async function fetchRelated(slug: string): Promise<Product[]> {
 export async function fetchCollections(): Promise<Collection[]> {
   return ((await getJson<ApiCollection[]>('/api/collections')) ?? []).map(toCollection);
 }
+export async function fetchCollectionProducts(slug: string): Promise<Product[]> {
+  return ((await getJson<ApiProduct[]>(`/api/collections/${encodeURIComponent(slug)}/products`)) ?? []).map(toProduct);
+}
 export async function fetchFacets(): Promise<{ categories: string[]; clayBodies: string[]; attributes: string[] }> {
   return (
     (await getJson<{ categories: string[]; clayBodies: string[]; attributes: string[] }>('/api/facets')) ?? {

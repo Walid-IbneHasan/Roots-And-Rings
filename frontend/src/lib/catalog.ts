@@ -71,6 +71,10 @@ export async function getCollection(slug: string): Promise<Collection | undefine
   return (await api.fetchCollections()).find((c) => c.slug === slug);
 }
 
+export async function getCollectionProducts(slug: string): Promise<Product[]> {
+  return api.fetchCollectionProducts(slug);
+}
+
 export interface Facets {
   categories: string[];
   clayBodies: string[];

@@ -21,7 +21,7 @@ const collections = await getCollections();
   <section class="wrap pb-section-gap">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter md:gap-y-20">
       {collections.map((c, i) => (
-        <a href="/objects" class={`group block fade-up ${i % 2 === 1 ? 'md:mt-20' : ''}`}>
+        <a href={`/collections/${c.slug}`} class={`group block fade-up ${i % 2 === 1 ? 'md:mt-20' : ''}`}>
           <Img
             src={c.image.src}
             alt={c.image.alt}

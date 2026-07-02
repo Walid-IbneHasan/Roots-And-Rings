@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Img from '../../components/ui/Img.astro';
+import ProductCard from '../../components/product/ProductCard.astro';
+import { getCollection, getCollectionProducts } from '../../lib/catalog';
+import JsonLd from '../../components/seo/JsonLd.astro';
+import { itemListSchema, breadcrumbSchema } from '../../lib/structured-data';
+
+const { slug } = Astro.params;
+const collection = slug ? await getCollection(slug) : undefined;
+if (!collection) return new Response('Not found', { status: 404 });
+const products = await getCollectionProducts(slug!);
+const categories = [...new Set(products.map((p) => p.category).filter(Boolean))].sort();
+---
+
+<BaseLayout title={collection.name} description={collection.tagline || collection.description || `Pieces from the ${collection.name} collection.`}>
+  <JsonLd slot="head" schema={breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Collections', url: '/collections' }, { name: collection.name, url: `/collections/${collection.slug}` }])} />
+  <JsonLd slot="head" schema={itemListSchema(products.map((p) => ({ name: p.name, url: `/objects/${p.slug}` })))} />
+
+  <section class="relative h-[42vh] min-h-[300px] flex items-center justify-center overflow-hidden">
+    {collection.image.src && (
+      <Img fill src={collection.image.src} alt={collection.image.alt} priority widths={[768, 1280, 1920]} sizes="100vw" />
+    )}
+    <div class="absolute inset-0 bg-surface/35"></div>
+    <div class="relative text-center fade-up px-6">
+      <span class="text-label-caps uppercase opacity-60 mb-3 block">Collection</span>
+      <h1 class="font-display text-display-mobile md:text-display-lg">{collection.name}</h1>
+      {(collection.tagline || collection.description) && (
+        <p class="text-body-lg text-on-surface-variant mt-3 max-w-xl mx-auto">{collection.tagline || collection.description}</p>
+      )}
+    </div>
+  </section>
+
+  <section class="wrap py-12 md:py-16">
+    {products.length === 0 ? (
+      <p class="text-body-md text-on-surface-variant py-24 text-center">No pieces in this collection yet.</p>
+    ) : (
+      <>
+        <div class="flex items-center justify-between gap-4 pb-6 hairline-b">
+          <span class="text-label-caps uppercase opacity-60"><span data-coll-count>{products.length}</span> Pieces</span>
+          {categories.length > 1 && (
+            <div class="flex flex-wrap gap-2" data-coll-filter>
+              <button type="button" class="text-label-caps uppercase border border-outline px-3 py-1.5 is-active" data-cat="">All</button>
+              {categories.map((c) => (
+                <button type="button" class="text-label-caps uppercase border border-outline px-3 py-1.5" data-cat={c}>{c}</button>
+              ))}
+            </div>
+          )}
+        </div>
+        <div data-coll-grid class="grid grid-cols-2 lg:grid-cols-3 gap-x-gutter gap-y-12 md:gap-y-16 mt-10">
+          {products.map((p) => (
+            <div class="coll-cell" data-category={p.category}>
+              <ProductCard product={p} sizes="(max-width: 768px) 50vw, (max-width: 1024px) 40vw, 25vw" />
+            </div>
+          ))}
+        </div>
+      </>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  [data-coll-filter] button { opacity: .55; transition: opacity .2s; }
+  [data-coll-filter] button.is-active { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+</style>
+
+<script>
+  (function () {
+    var filter = document.querySelector('[data-coll-filter]');
+    if (!filter) return;
+    var cells = Array.prototype.slice.call(document.querySelectorAll('.coll-cell'));
+    var countEl = document.querySelector('[data-coll-count]');
+    filter.addEventListener('click', function (e) {
+      var btn = (e.target as HTMLElement).closest('[data-cat]');
+      if (!btn) return;
+      var cat = btn.getAttribute('data-cat');
+      filter.querySelectorAll('[data-cat]').forEach(function (b) { b.classList.toggle('is-active', b === btn); });
+      var shown = 0;
+      cells.forEach(function (cell) {
+        var match = !cat || cell.getAttribute('data-category') === cat;
+        (cell as HTMLElement).style.display = match ? '' : 'none';
+        if (match) shown++;
+      });
+      if (countEl) countEl.textContent = String(shown);
+    });
+  })();
+</script>
