@@ -59,6 +59,7 @@
     <div class="brand">ROOTS &amp; RINGS</div>
     <nav>
       <a href="/admin" class="<%= it.active==='dashboard'?'active':'' %>">Dashboard</a>
+      <a href="/admin/analytics" class="<%= it.active==='analytics'?'active':'' %>">Analytics</a>
       <a href="/admin/products" class="<%= it.active==='products'?'active':'' %>">Products</a>
       <a href="/admin/orders" class="<%= it.active==='orders'?'active':'' %>">Orders</a>
       <a href="/admin/coupons" class="<%= it.active==='coupons'?'active':'' %>">Coupons</a>

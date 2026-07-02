@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { registerAdminAuth } from './auth';
 import { registerAdminDashboard } from './dashboard';
+import { registerAdminAnalytics } from './analytics';
 import { registerAdminCategories } from './categories';
 import { registerAdminProducts } from './products';
 import { registerAdminOrders } from './orders';
@@ -12,6 +13,7 @@ import { registerAdminReviews } from './reviews';
 export async function registerAdmin(app: FastifyInstance) {
   registerAdminAuth(app);
   registerAdminDashboard(app);
+  registerAdminAnalytics(app);
   registerAdminCategories(app);
   registerAdminProducts(app);
   registerAdminOrders(app);

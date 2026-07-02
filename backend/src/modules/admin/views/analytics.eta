@@ -1,0 +1,56 @@
+<div class="toolbar">
+  <div><h1>Analytics</h1><p class="sub">Insights over the selected period</p></div>
+  <div class="seg">
+    <a href="/admin/analytics?period=daily" class="btn sm <%= it.period==='daily' ? '' : 'ghost' %>">Daily</a>
+    <a href="/admin/analytics?period=weekly" class="btn sm <%= it.period==='weekly' ? '' : 'ghost' %>">Weekly</a>
+    <a href="/admin/analytics?period=monthly" class="btn sm <%= it.period==='monthly' ? '' : 'ghost' %>">Monthly</a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="card"><div class="l">Orders</div><div class="n"><%= it.summary.orders %></div></div>
+  <div class="card"><div class="l">Revenue</div><div class="n"><%= it.summary.revenue %></div></div>
+  <div class="card"><div class="l">Avg order value</div><div class="n"><%= it.summary.aov %></div></div>
+</div>
+
+<div class="card" style="margin-top:24px"><h2>Sales over time</h2><%~ it.charts.sales %></div>
+
+<div class="row" style="margin-top:24px">
+  <div class="card"><h2>Peak hour of day</h2><%~ it.charts.hours %></div>
+  <div class="card"><h2>Peak day of week</h2><%~ it.charts.weekdays %></div>
+</div>
+
+<div class="card" style="margin-top:24px"><h2>Top products</h2><%~ it.charts.products %></div>
+
+<div class="row" style="margin-top:24px">
+  <div class="card"><h2>Top categories</h2><%~ it.charts.categories %></div>
+  <div class="card"><h2>Top collections</h2><%~ it.charts.collections %></div>
+</div>
+
+<div class="card" style="margin-top:24px">
+  <h2>Orders by channel</h2>
+  <div class="row" style="align-items:center">
+    <div style="flex:0 0 220px;max-width:220px"><%~ it.charts.channels %></div>
+    <div style="flex:1;min-width:200px">
+      <table>
+        <tbody>
+          <% it.channelLegend.forEach(function (c) { %>
+          <tr>
+            <td><span style="display:inline-block;width:10px;height:10px;background:<%= c.color %>;margin-right:8px"></span><%= c.source %></td>
+            <td><%= c.orders %> orders · <%= c.revenue %></td>
+            <td class="muted"><%= c.pct %>%</td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<style>
+  .seg { display: flex; gap: 6px; }
+  @media (max-width: 720px) {
+    main { padding: 20px 16px !important; }
+    .card { min-width: 100% !important; }
+  }
+</style>
